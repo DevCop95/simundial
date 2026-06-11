@@ -1,0 +1,12 @@
+{
+  "name": "mundial-simulator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simulador interactivo y premium del mundial",
+  "scripts": {
+    "test": "node tests/verify.js"
+  },
+  "dependencies": {
+    "puppeteer": "^25.1.0"
+  }
+}

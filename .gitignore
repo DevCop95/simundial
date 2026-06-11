@@ -1,0 +1,17 @@
+# Dependency directories
+node_modules/
+
+# Local cache files
+tools/wikipedia_cache.json
+
+# Archived raw HTML/JSON dumps
+archive/
+
+# Local debug and scraper HTML files (except the main index.html)
+*.html
+!index.html
+
+# Logs & System files
+.DS_Store
+Thumbs.db
+npm-debug.log*

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador del Mundial de Fútbol - Edición Profesional</title>
+  <meta name="description" content="Simula de forma interactiva el mundial de fútbol. Controla las convocatorias de cada país, gestiona lesiones y decide los ganadores manualmente o con nuestro simulador inteligente.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="style.css?v=1.1">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Area -->
+    <header>
+      <div class="logo-container">
+        <img src="assets/logo_world_cup.png" alt="Mundial Logo" style="height: 48px; object-fit: contain;">
+        <div class="logo-text">
+          <h1>MUNDIAL SIMULATOR</h1>
+          <p>Edición Profesional & Estadísticas Reales</p>
+        </div>
+      </div>
+      
+      <!-- Interactive Action Dashboard -->
+      <div class="action-panel">
+        <button id="btn-reset" class="btn btn-accent" title="Reiniciar todo el torneo">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6.3 5.26l-1.46-1.46C3.46 8.97 3 10.43 3 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z"/></svg>
+          Reiniciar
+        </button>
+        
+        <button id="btn-next-phase" class="btn btn-secondary" title="Avanzar a la siguiente fase">
+          Simular Siguiente Fase
+        </button>
+
+        <!-- Drag / Slide to Simulate button -->
+        <div class="slider-container" id="sim-slider">
+          <div class="slider-bg-progress" id="slider-progress"></div>
+          <div class="slider-handle" id="slider-handle">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+          </div>
+          <span class="slider-text">Desliza para Simular Todo</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="tab-groups">Fase de Grupos</button>
+      <button class="tab-btn" data-tab="tab-bracket" id="nav-btn-bracket">Fase de Eliminatorias</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <main>
+      <!-- Tab 1: Group Stage -->
+      <section id="tab-groups" class="tab-content active">
+        <div class="groups-grid" id="groups-container">
+          <!-- Dynamically populated groups (A to H) -->
+        </div>
+      </section>
+
+      <!-- Tab 2: Bracket/Eliminatorias -->
+      <section id="tab-bracket" class="tab-content">
+        <div class="panel bracket-scroll">
+          <div class="bracket-container" id="bracket-container">
+                    <!-- Round of 32 (Dieciseisavos) -->
+            <div class="bracket-column" id="col-r32">
+              <div class="bracket-column-title">Dieciseisavos de Final</div>
+              <div id="bracket-r32" style="display: contents;">
+                <!-- Round of 32 matches -->
+              </div>
+            </div>
+
+            <!-- Round of 16 -->
+            <div class="bracket-column" id="col-r16">
+              <div class="bracket-column-title">Octavos de Final</div>
+              <div id="bracket-r16" style="display: contents;">
+                <!-- Round of 16 matches -->
+              </div>
+            </div>
+
+            <!-- Quarter Finals -->
+            <div class="bracket-column" id="col-qf">
+              <div class="bracket-column-title">Cuartos de Final</div>
+              <div id="bracket-qf" style="display: contents;">
+                <!-- Quarter final matches -->
+              </div>
+            </div>
+
+            <!-- Semi Finals -->
+            <div class="bracket-column" id="col-sf">
+              <div class="bracket-column-title">Semifinales</div>
+              <div id="bracket-sf" style="display: contents;">
+                <!-- Semi final matches -->
+              </div>
+            </div>
+
+            <!-- Finals & 3rd Place -->
+            <div class="bracket-column" id="col-finals">
+              <div class="bracket-column-title">Finales</div>
+              <div id="bracket-finals" style="display: contents;">
+                <!-- Third place & Final matches -->
+              </div>
+            </div></div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Team details and squad (injuries toggle) -->
+  <div class="modal-overlay" id="team-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="team-modal-close" aria-label="Cerrar modal">✕</button>
+      <div class="modal-body">
+        <div class="team-detail-grid">
+          <!-- Left Column: Team ratings/Form -->
+          <div class="team-info-side">
+            <div class="team-info-header">
+              <img class="team-flag-large" id="modal-team-flag" src="" alt="Bandera">
+              <div>
+                <h2 id="modal-team-name">Argentina</h2>
+                <span id="modal-team-group" style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">GRUPO C</span>
+              </div>
+            </div>
+            <p class="team-desc" id="modal-team-desc">Cargando detalles de la selección...</p>
+            
+            <div class="stat-bar-container">
+              <div class="stat-label">
+                <span>Nivel General</span>
+                <span id="stat-val-overall">89</span>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill stat-fill-overall" id="stat-bar-overall" style="width: 89%;"></div>
+              </div>
+
+              <div class="stat-label">
+                <span>Ataque</span>
+                <span id="stat-val-attack">90</span>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill stat-fill-attack" id="stat-bar-attack" style="width: 90%;"></div>
+              </div>
+
+              <div class="stat-label">
+                <span>Mediocampo</span>
+                <span id="stat-val-midfield">88</span>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill stat-fill-midfield" id="stat-bar-midfield" style="width: 88%;"></div>
+              </div>
+
+              <div class="stat-label">
+                <span>Defensa</span>
+                <span id="stat-val-defense">87</span>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill stat-fill-defense" id="stat-bar-defense" style="width: 87%;"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Column: Squad list & injury switches -->
+          <div class="squad-side">
+            <h3>Alineación y Táctica</h3>
+            <div class="tactical-pitch" id="modal-tactical-pitch">
+              <div class="penalty-area-top"></div>
+              <div class="penalty-area-bottom"></div>
+              <!-- Starter circles will be dynamically injected here -->
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: -0.5rem; margin-bottom: 0.75rem; text-align: center;">
+              * Selecciona un titular en el campo y luego presiona "Sustituir" en un suplente
+            </div>
+
+            <h3>Convocatoria & Lesiones</h3>
+            <div class="player-list" id="modal-player-list">
+              <!-- Dynamically populated player cards -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Match events detail -->
+  <div class="modal-overlay" id="match-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close" id="match-modal-close" aria-label="Cerrar modal">✕</button>
+      <div class="modal-body">
+        <div style="text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase;" id="match-modal-title">Fase de Grupos</h3>
+          <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 1rem;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <img class="team-flag-large" id="match-modal-home-flag" src="" alt="Bandera Casa">
+              <span id="match-modal-home-name" style="font-weight: 700; font-size: 0.95rem;">Argentina</span>
+            </div>
+            <div style="font-size: 2.2rem; font-weight: 800; font-family: 'Outfit', sans-serif;" id="match-modal-score">2 - 1</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <img class="team-flag-large" id="match-modal-away-flag" src="" alt="Bandera Fuera">
+              <span id="match-modal-away-name" style="font-weight: 700; font-size: 0.95rem;">Francia</span>
+            </div>
+          </div>
+          <div id="match-modal-extra" style="font-size: 0.75rem; color: var(--primary); margin-top: 0.5rem; font-weight: 600;"></div>
+        </div>
+        
+        <div class="events-modal-list" id="match-modal-events">
+          <!-- Match scorer events -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration & Awards Screen overlay -->
+  <div class="celebration-screen" id="celebration-screen">
+    <canvas class="fireworks-canvas" id="canvas-fireworks"></canvas>
+    
+    <div class="celebration-container">
+      <!-- Champion Highlight -->
+      <div class="champ-card">
+        <span class="champ-title">¡Campeón del Mundo!</span>
+        <div class="trophy-image-container">
+          <img src="assets/world_cup_trophy.png" alt="Trophy" class="trophy-img">
+        </div>
+        <div class="champ-name-container">
+          <img class="champ-flag" id="celebration-champion-flag" src="" alt="Bandera Campeón">
+          <h2 class="champ-name" id="celebration-champion">ARGENTINA</h2>
+        </div>
+      </div>
+
+      <!-- Divider / Section Title -->
+      <div style="text-align: center; margin-top: 1rem;">
+        <h3 class="font-display" style="font-size: 1.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #ffffff;">
+          Premios Individuales del Torneo
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Estadísticas reales simuladas del campeonato</p>
+      </div>
+
+      <!-- Awards Cards Grid -->
+      <div class="awards-grid">
+        <!-- 1. Golden Boot (Top Scorer) -->
+        <div class="award-card">
+          <div class="award-img-container">
+            <img src="assets/golden_boot.png" alt="Bota de Oro" class="award-img">
+          </div>
+          <span class="award-title">Bota de Oro</span>
+          <div class="award-winner-container">
+            <img class="award-winner-avatar" id="award-boot-avatar" src="" alt="Scorer Avatar">
+            <div class="award-winner-name" id="award-boot-name">Lionel Messi</div>
+          </div>
+          <div class="award-winner-team-row" id="award-boot-team-row">
+            <img class="team-flag-icon" id="award-boot-flag" src="" alt="Flag">
+            <span id="award-boot-team">Argentina</span>
+          </div>
+          <div class="award-stat" id="award-boot-stat">6 <span class="award-stat-label">goles</span></div>
+        </div>
+
+        <!-- 2. Golden Playmaker (Top Assists) -->
+        <div class="award-card">
+          <div class="award-img-container">
+            <img src="assets/golden_playmaker.png" alt="Máximo Asistente" class="award-img">
+          </div>
+          <span class="award-title">Máximo Asistente</span>
+          <div class="award-winner-container">
+            <img class="award-winner-avatar" id="award-playmaker-avatar" src="" alt="Playmaker Avatar">
+            <div class="award-winner-name" id="award-playmaker-name">Antoine Griezmann</div>
+          </div>
+          <div class="award-winner-team-row" id="award-playmaker-team-row">
+            <img class="team-flag-icon" id="award-playmaker-flag" src="" alt="Flag">
+            <span id="award-playmaker-team">Francia</span>
+          </div>
+          <div class="award-stat" id="award-playmaker-stat">4 <span class="award-stat-label">asistencias</span></div>
+        </div>
+
+        <!-- 3. Golden Boy (Best Young Player) -->
+        <div class="award-card">
+          <div class="award-img-container">
+            <img src="assets/golden_boy.png" alt="Mejor Jugador Joven" class="award-img">
+          </div>
+          <span class="award-title">Mejor Joven</span>
+          <div class="award-winner-container">
+            <img class="award-winner-avatar" id="award-boy-avatar" src="" alt="Young Avatar">
+            <div class="award-winner-name" id="award-boy-name">Lamine Yamal</div>
+          </div>
+          <div class="award-winner-team-row" id="award-boy-team-row">
+            <img class="team-flag-icon" id="award-boy-flag" src="" alt="Flag">
+            <span id="award-boy-team">España</span>
+          </div>
+          <div class="award-stat" id="award-boy-stat">18 <span class="award-stat-label">años</span></div>
+        </div>
+
+        <!-- 4. Golden Glove (Best Goalkeeper) -->
+        <div class="award-card">
+          <div class="award-img-container">
+            <img src="assets/golden_glove.png" alt="Guante de Oro" class="award-img">
+          </div>
+          <span class="award-title">Guante de Oro</span>
+          <div class="award-winner-container">
+            <img class="award-winner-avatar" id="award-glove-avatar" src="" alt="Goalkeeper Avatar">
+            <div class="award-winner-name" id="award-glove-name">Dibu Martínez</div>
+          </div>
+          <div class="award-winner-team-row" id="award-glove-team-row">
+            <img class="team-flag-icon" id="award-glove-flag" src="" alt="Flag">
+            <span id="award-glove-team">Argentina</span>
+          </div>
+          <div class="award-stat" id="award-glove-stat">4 <span class="award-stat-label">vallas invictas</span></div>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <button id="btn-celebration-close" class="btn btn-primary btn-large" style="padding: 0.85rem 3rem; font-size: 1rem; border-radius: 4px;">
+        Volver a Simular
+      </button>
+    </div>
+  </div>
+
+  <!-- Main scripts -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

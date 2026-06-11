@@ -1,0 +1,10 @@
+import { teamsData } from '../data.js';
+const can = teamsData.find(t => t.id === 'CAN');
+const davies = can.squad.find(p => p.name.toLowerCase().includes('davies'));
+console.log('Alphonso Davies foto URL:');
+console.log(davies?.photo);
+console.log('');
+const arg = teamsData.find(t => t.id === 'ARG');
+const messi = arg.squad.find(p => p.name.toLowerCase().includes('messi'));
+console.log('Messi foto URL:');
+console.log(messi?.photo);
