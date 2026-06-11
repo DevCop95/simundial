@@ -243,19 +243,20 @@ export class WorldCupSimulator {
 
       // Goalkeeper saves tracking
       if (gk) {
-        // saves proportional to goalkeeper rating and opponent attack
-        const savesCount = Math.floor(Math.random() * 3) + (gk.rating > 82 ? 2 : 1);
+        // Simulate shots on target based on opponent attack rating
+        const shotsOnTarget = Math.max(numGoals, Math.floor((scoringTeam.attack / 22) + Math.random() * 4));
+        const savesCount = Math.max(0, shotsOnTarget - numGoals);
         this.playerStats[gk.id].saves += savesCount;
       }
 
       for (let g = 0; g < numGoals; g++) {
         // 1. Goal Scorer selection
-        // DEL: 75% odds, MED: 22%, DEF: 3%, POR: 0%
+        // DEL: 65% odds, MED: 25%, DEF: 10%, POR: 0%
         let scorer = null;
         const roll = Math.random() * 100;
         let targetPosition = "DEL";
-        if (roll > 75 && roll <= 97) targetPosition = "MED";
-        else if (roll > 97) targetPosition = "DEF";
+        if (roll > 65 && roll <= 90) targetPosition = "MED";
+        else if (roll > 90) targetPosition = "DEF";
 
         let candidates = playingScoring.filter(p => p.position === targetPosition);
         if (candidates.length === 0) {
@@ -365,6 +366,10 @@ export class WorldCupSimulator {
           let penA = 0;
           let penB = 0;
           
+          // Dynamic kicker ratings based on team stats
+          const kickerRatingA = Math.round(statsA.attack * 0.6 + statsA.midfield * 0.4);
+          const kickerRatingB = Math.round(statsB.attack * 0.6 + statsB.midfield * 0.4);
+
           // Probability of scoring a penalty: base 75%, modified by goalie rating vs kicker rating
           const gkA = lineupA.find(p => p.position === "POR");
           const gkB = lineupB.find(p => p.position === "POR");
@@ -375,15 +380,15 @@ export class WorldCupSimulator {
 
           // 5 kicks round-robin
           for (let i = 0; i < 5; i++) {
-            if (Math.random() < getPenProb(80, gkB ? gkB.rating : 75)) penA++;
-            if (Math.random() < getPenProb(80, gkA ? gkA.rating : 75)) penB++;
+            if (Math.random() < getPenProb(kickerRatingA, gkB ? gkB.rating : 75)) penA++;
+            if (Math.random() < getPenProb(kickerRatingB, gkA ? gkA.rating : 75)) penB++;
           }
 
           // Sudden death if draw
           let round = 5;
           while (penA === penB && round < 15) {
-            if (Math.random() < getPenProb(80, gkB ? gkB.rating : 75)) penA++;
-            if (Math.random() < getPenProb(80, gkA ? gkA.rating : 75)) penB++;
+            if (Math.random() < getPenProb(kickerRatingA, gkB ? gkB.rating : 75)) penA++;
+            if (Math.random() < getPenProb(kickerRatingB, gkA ? gkA.rating : 75)) penB++;
             round++;
           }
 
@@ -806,11 +811,11 @@ export class WorldCupSimulator {
     const goldenPlaymaker = topAssisters[0];
 
     // 3. Mejor Jugador Joven (Best Young Player, age <= 21)
-    // Selected from players <= 21, sorting by sum of goals + assists, then rating
+    // Selected from players <= 21, sorting by weight of goals + assists + matches played, then rating
     const youngPlayers = statsList.filter(p => p.player.age <= 21);
     const topYoung = youngPlayers.sort((a, b) => {
-      const scoreA = a.goals * 1.5 + a.assists;
-      const scoreB = b.goals * 1.5 + b.assists;
+      const scoreA = a.goals * 2.0 + a.assists * 1.2 + a.matchesPlayed * 0.5;
+      const scoreB = b.goals * 2.0 + b.assists * 1.2 + b.matchesPlayed * 0.5;
       if (scoreB !== scoreA) return scoreB - scoreA;
       return b.player.rating - a.player.rating;
     });
