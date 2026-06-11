@@ -1134,6 +1134,80 @@ input:checked ~ .injury-label {
   .champ-name {
     font-size: 2rem;
   }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .tactical-pitch {
+    height: 300px;
+  }
+
+  .pitch-player-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pitch-player-name {
+    font-size: 0.6rem;
+    max-width: 65px;
+  }
+
+  .pitch-player-badge {
+    font-size: 0.55rem;
+    padding: 0.05rem 0.15rem;
+    top: -3px;
+    right: -3px;
+  }
+
+  .pitch-player-injury-badge {
+    width: 14px;
+    height: 14px;
+    top: 20px;
+    left: -3px;
+  }
+
+  .pitch-player-injury-badge svg {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .player-card {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .player-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .player-name {
+    font-size: 0.75rem;
+  }
+
+  .player-meta {
+    font-size: 0.65rem;
+  }
+
+  .injury-label {
+    font-size: 0.65rem;
+  }
+
+  select.btn-swap, .btn-substitute {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  select.btn-swap {
+    padding-right: 1.1rem;
+    background-position: right 0.3rem center;
+    background-size: 7px;
+    margin-left: 0.25rem;
+  }
 }
 
 /* Tactical Pitch Elements */
