@@ -962,94 +962,97 @@ function renderSquadList(team) {
     actionArea.style.alignItems = "center";
     actionArea.style.gap = "1rem";
 
-    // Swap / Substitution button (Cambiar dropdown)
-    const swapContainer = document.createElement("div");
-    swapContainer.style.position = "relative";
-
-    const btnSwap = document.createElement("button");
-    btnSwap.className = "btn-swap";
-    btnSwap.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;">
-        <path d="M17 1l4 4-4 4"/>
-        <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-        <path d="M7 23l-4-4 4-4"/>
-        <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-      </svg>
-      Cambiar
-    `;
-
-    const selectSwap = document.createElement("select");
-    selectSwap.style.display = "none";
-    selectSwap.style.position = "absolute";
-    selectSwap.style.top = "100%";
-    selectSwap.style.right = "0";
-    selectSwap.style.zIndex = "100";
-    selectSwap.className = "premium-select";
-
-    const defOpt = document.createElement("option");
-    defOpt.innerText = "Reemplazar con...";
-    defOpt.value = "";
-    selectSwap.appendChild(defOpt);
-
-    // Candidates are of the SAME position, but OPPOSITE starter status
-    const candidates = team.squad.filter(p => p.position === player.position && p.isStarter !== player.isStarter);
-    candidates.forEach(c => {
-      const opt = document.createElement("option");
-      opt.value = c.id;
-      opt.innerText = `${c.name} (${c.rating})`;
-      selectSwap.appendChild(opt);
-    });
-
-    btnSwap.addEventListener("click", (e) => {
-      e.stopPropagation();
-      // Hide all other open selects first
-      document.querySelectorAll(".premium-select").forEach(sel => {
-        if (sel !== selectSwap) sel.style.display = "none";
-      });
-      // Toggle this select
-      if (selectSwap.style.display === "none") {
-        selectSwap.style.display = "block";
-        selectSwap.focus();
-      } else {
-        selectSwap.style.display = "none";
-      }
-    });
-
-    selectSwap.addEventListener("change", (e) => {
-      e.stopPropagation();
-      const targetId = selectSwap.value;
-      if (targetId) {
-        const targetPlayer = team.squad.find(p => p.id === targetId);
-        if (targetPlayer) {
-          // Swap positions
-          const temp = player.isStarter;
-          player.isStarter = targetPlayer.isStarter;
-          targetPlayer.isStarter = temp;
-          
-          selectedPitchPlayerId = null;
-          
-          // Refresh details and tables
-          updateModalRatingsBars(team);
-          renderTacticalPitch(team);
-          renderSquadList(team);
-          renderGroupStage();
-          renderBracket();
-
-          // Save to LocalStorage
-          sim.saveSquadsToLocalStorage();
+    // Swap / Substitution control
+    if (selectedPitchPlayerId !== null) {
+      // Find the selected player from the pitch
+      const pitchPlayer = team.squad.find(p => p.id === selectedPitchPlayerId);
+      
+      if (pitchPlayer && !player.isStarter) {
+        // If this player in the list is a bench player and same position, show "Sustituir"
+        const btnSubstitute = document.createElement("button");
+        if (player.position === pitchPlayer.position) {
+          btnSubstitute.className = "btn-substitute";
+          btnSubstitute.innerText = "Sustituir";
+          btnSubstitute.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            // Swap starter status
+            const temp = player.isStarter;
+            player.isStarter = pitchPlayer.isStarter;
+            pitchPlayer.isStarter = temp;
+            
+            selectedPitchPlayerId = null; // Clear selection
+            
+            // Refresh
+            updateModalRatingsBars(team);
+            renderTacticalPitch(team);
+            renderSquadList(team);
+            renderGroupStage();
+            renderBracket();
+            
+            // Save to LocalStorage
+            sim.saveSquadsToLocalStorage();
+          });
+        } else {
+          btnSubstitute.className = "btn-substitute disabled";
+          btnSubstitute.disabled = true;
+          btnSubstitute.innerText = "Pos. distinta";
         }
+        actionArea.appendChild(btnSubstitute);
       }
-      selectSwap.style.display = "none";
-    });
+    } else {
+      // Normal state: native select styled as a button
+      const selectSwap = document.createElement("select");
+      selectSwap.className = "btn-swap";
+      selectSwap.title = "Cambiar jugador de la alineación";
 
-    // Close select on window click
-    document.addEventListener("click", () => {
-      selectSwap.style.display = "none";
-    });
+      const defOpt = document.createElement("option");
+      defOpt.innerText = "Cambiar";
+      defOpt.value = "";
+      defOpt.disabled = true;
+      defOpt.selected = true;
+      defOpt.hidden = true;
+      selectSwap.appendChild(defOpt);
 
-    swapContainer.appendChild(btnSwap);
-    swapContainer.appendChild(selectSwap);
-    actionArea.appendChild(swapContainer);
+      // Candidates are of the SAME position, but OPPOSITE starter status
+      const candidates = team.squad.filter(p => p.position === player.position && p.isStarter !== player.isStarter);
+      candidates.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.innerText = `${c.name} (${c.rating})`;
+        selectSwap.appendChild(opt);
+      });
+
+      selectSwap.addEventListener("change", (e) => {
+        e.stopPropagation();
+        const targetId = selectSwap.value;
+        if (targetId) {
+          const targetPlayer = team.squad.find(p => p.id === targetId);
+          if (targetPlayer) {
+            // Swap positions
+            const temp = player.isStarter;
+            player.isStarter = targetPlayer.isStarter;
+            targetPlayer.isStarter = temp;
+            
+            selectedPitchPlayerId = null;
+            
+            // Refresh details and tables
+            updateModalRatingsBars(team);
+            renderTacticalPitch(team);
+            renderSquadList(team);
+            renderGroupStage();
+            renderBracket();
+
+            // Save to LocalStorage
+            sim.saveSquadsToLocalStorage();
+          }
+        }
+        // Reset select value to placeholder
+        selectSwap.value = "";
+      });
+
+      actionArea.appendChild(selectSwap);
+    }
 
     // Right toggle switch
     const toggleArea = document.createElement("div");
