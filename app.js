@@ -958,9 +958,7 @@ function renderSquadList(team) {
 
     // Right elements (swap button + toggle)
     const actionArea = document.createElement("div");
-    actionArea.style.display = "flex";
-    actionArea.style.alignItems = "center";
-    actionArea.style.gap = "1rem";
+    actionArea.className = "player-card-actions";
 
     // Swap / Substitution control
     if (selectedPitchPlayerId !== null) {
