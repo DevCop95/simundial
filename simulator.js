@@ -220,8 +220,8 @@ export class WorldCupSimulator {
     const ratingDiff = statsA.rating - statsB.rating;
     const shift = ratingDiff * 0.05;
 
-    const lambdaA = Math.max(0.1, (statsA.attack * 1.3 - statsB.defense * 0.95 + 10) / 45 + shift);
-    const lambdaB = Math.max(0.1, (statsB.attack * 1.3 - statsA.defense * 0.95 + 10) / 45 - shift);
+    const lambdaA = Math.max(0.1, (statsA.attack * 1.3 - statsB.defense * 0.95 + 10) / 28 + shift);
+    const lambdaB = Math.max(0.1, (statsB.attack * 1.3 - statsA.defense * 0.95 + 10) / 28 - shift);
 
     let goalsA = poissonRandom(lambdaA);
     let goalsB = poissonRandom(lambdaB);
