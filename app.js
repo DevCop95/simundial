@@ -223,6 +223,7 @@ function renderGroupStage() {
           const res = sim.simulateMatch(m.home, m.away, false);
           m.score = { home: res.goalsA, away: res.goalsB };
           m.events = res.events;
+          m.redCards = res.redCards || [];
           m.played = true;
 
           const grp = sim.groups[letter];
@@ -825,7 +826,7 @@ function renderTacticalPitch(team) {
 
   starters.forEach(player => {
     const node = document.createElement("div");
-    node.className = `pitch-player ${selectedPitchPlayerId === player.id ? "selected" : ""} ${player.injured ? "injured-state" : ""}`;
+    node.className = `pitch-player ${selectedPitchPlayerId === player.id ? "selected" : ""} ${player.injured ? "injured-state" : ""} ${player.suspended ? "suspended-state" : ""}`;
     
     // Position on field (4-3-3 formation)
     let coords = { x: "50%", y: "50%" };
@@ -895,6 +896,21 @@ function renderTacticalPitch(team) {
       node.appendChild(injuryBadge);
     }
 
+    // Suspension Badge overlay (red card icon)
+    if (player.suspended) {
+      const suspBadge = document.createElement("span");
+      suspBadge.className = "pitch-player-injury-badge";
+      suspBadge.style.background = "#dc2626";
+      suspBadge.style.color = "#fff";
+      suspBadge.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:10px;height:10px;display:block;">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+        </svg>
+      `;
+      suspBadge.title = "SUSPENDIDO — no puede jugar el próximo partido";
+      node.appendChild(suspBadge);
+    }
+
     // Event listener to select for substitution
     node.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -918,7 +934,7 @@ function renderSquadList(team) {
 
   team.squad.forEach(player => {
     const card = document.createElement("div");
-    card.className = `player-card ${player.injured ? "injured-state" : ""}`;
+    card.className = `player-card ${player.injured ? "injured-state" : ""} ${player.suspended ? "suspended-state" : ""}`;
     card.id = `player-card-${player.id}`;
 
     // Left info
@@ -935,9 +951,14 @@ function renderSquadList(team) {
     posTag.innerText = player.position;
     
     // Check starter status tag
-    const roleTag = player.isStarter 
-      ? `<span style="font-size:0.65rem; color:#10b981; font-weight:800; border: 1px solid #10b981; padding: 0.1rem 0.3rem; border-radius: 2px; text-transform: uppercase;">Titular</span>`
-      : `<span style="font-size:0.65rem; color:var(--text-muted); font-weight:700; border: 1px solid var(--glass-border); padding: 0.1rem 0.3rem; border-radius: 2px; text-transform: uppercase;">Suplente</span>`;
+    let roleTag;
+    if (player.suspended) {
+      roleTag = `<span style="font-size:0.65rem; color:#ef4444; font-weight:800; border: 1px solid #ef4444; background:rgba(239,68,68,0.12); padding: 0.1rem 0.4rem; border-radius: 2px; text-transform: uppercase;">🟥 Suspendido</span>`;
+    } else if (player.isStarter) {
+      roleTag = `<span style="font-size:0.65rem; color:#10b981; font-weight:800; border: 1px solid #10b981; padding: 0.1rem 0.3rem; border-radius: 2px; text-transform: uppercase;">Titular</span>`;
+    } else {
+      roleTag = `<span style="font-size:0.65rem; color:var(--text-muted); font-weight:700; border: 1px solid var(--glass-border); padding: 0.1rem 0.3rem; border-radius: 2px; text-transform: uppercase;">Suplente</span>`;
+    }
 
     const starIcon = player.isKey 
       ? `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 13px; height: 13px; color: #f59e0b; margin-left: 4px; display: inline-block; vertical-align: -1px;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`
@@ -1149,27 +1170,70 @@ function openMatchModal(m, phaseName) {
 
   const extraDetails = document.getElementById("match-modal-extra");
   extraDetails.innerHTML = "";
-  if (m.details && m.details.penalties) {
+  if (m.fixed) {
+    const badge = document.createElement("span");
+    badge.style.cssText = "background:rgba(0,229,102,0.15);color:#00e566;border:1px solid rgba(0,229,102,0.4);border-radius:4px;padding:2px 8px;font-size:0.7rem;font-weight:700;letter-spacing:0.05em;";
+    badge.innerText = "✓ RESULTADO REAL";
+    extraDetails.appendChild(badge);
+  } else if (m.details && m.details.penalties) {
     extraDetails.innerText = `PENALTIES: ${m.details.penaltyScore.a} - ${m.details.penaltyScore.b}`;
   } else if (m.details && m.details.extraTime) {
     extraDetails.innerText = "PRÓRROGA JUGADA";
   }
 
+  // Determine event source: fixed matches use m.events, simulated ones use m.details.events
+  const events = m.events && m.events.length > 0 ? m.events
+    : (m.details && m.details.events ? m.details.events : []);
+
+  const redCards = m.redCards || [];
+
+  // Build combined timeline (goals + red cards), sorted by minute
+  const timeline = [
+    ...events.map(ev => ({ ...ev, type: "goal" })),
+    ...redCards.map(rc => ({ ...rc, type: "redcard" }))
+  ].sort((a, b) => a.minute - b.minute);
+
   // Populate events list
   const eventsList = document.getElementById("match-modal-events");
   eventsList.innerHTML = "";
 
-  if (m.details && m.details.events && m.details.events.length > 0) {
-    m.details.events.forEach(ev => {
+  if (timeline.length > 0) {
+    timeline.forEach(ev => {
       const item = document.createElement("div");
       item.className = "event-item";
-      item.innerHTML = `
-        <div class="event-minute">${ev.minute}'</div>
-        <div class="event-detail">
-          <div style="font-weight:700;">Gol de ${ev.scorer}</div>
-          ${ev.assister ? `<div class="event-assister">Asistencia: ${ev.assister}</div>` : ""}
-        </div>
-      `;
+
+      // Determine which team this event belongs to
+      let teamFlag = "";
+      let teamName = "";
+      if (ev.team === "home") {
+        teamFlag = m.home.flag;
+        teamName = m.home.name;
+      } else if (ev.team === "away") {
+        teamFlag = m.away.flag;
+        teamName = m.away.name;
+      }
+
+      const flagHtml = teamFlag
+        ? `<img src="https://flagcdn.com/${teamFlag}.svg" style="width:18px;height:13px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-right:5px;" alt="${teamName}">`
+        : "";
+
+      if (ev.type === "goal") {
+        item.innerHTML = `
+          <div class="event-minute">${ev.minute}'</div>
+          <div class="event-detail">
+            <div style="font-weight:700;">⚽ ${flagHtml}Gol de ${ev.scorer}</div>
+            ${ev.assister ? `<div class="event-assister">🎯 Asistencia: ${ev.assister}</div>` : ""}
+          </div>
+        `;
+      } else if (ev.type === "redcard") {
+        item.innerHTML = `
+          <div class="event-minute" style="color:#ff4444;">${ev.minute}'</div>
+          <div class="event-detail">
+            <div style="font-weight:700;color:#ff4444;">🟥 ${flagHtml}Expulsión: ${ev.player}</div>
+          </div>
+        `;
+      }
+
       eventsList.appendChild(item);
     });
   } else {

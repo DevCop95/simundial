@@ -152,15 +152,116 @@ export class WorldCupSimulator {
       const grpTeams = this.groups[letter];
       // 6 matches per group (Round Robin)
       // Round 1
-      this.groupMatches.push({ id: `${letter}_1`, group: letter, home: grpTeams[0], away: grpTeams[1], played: false, score: null, events: [] });
-      this.groupMatches.push({ id: `${letter}_2`, group: letter, home: grpTeams[2], away: grpTeams[3], played: false, score: null, events: [] });
+      this.groupMatches.push({ id: `${letter}_1`, group: letter, home: grpTeams[0], away: grpTeams[1], played: false, score: null, events: [], redCards: [] });
+      this.groupMatches.push({ id: `${letter}_2`, group: letter, home: grpTeams[2], away: grpTeams[3], played: false, score: null, events: [], redCards: [] });
       // Round 2
-      this.groupMatches.push({ id: `${letter}_3`, group: letter, home: grpTeams[0], away: grpTeams[2], played: false, score: null, events: [] });
-      this.groupMatches.push({ id: `${letter}_4`, group: letter, home: grpTeams[1], away: grpTeams[3], played: false, score: null, events: [] });
+      this.groupMatches.push({ id: `${letter}_3`, group: letter, home: grpTeams[0], away: grpTeams[2], played: false, score: null, events: [], redCards: [] });
+      this.groupMatches.push({ id: `${letter}_4`, group: letter, home: grpTeams[1], away: grpTeams[3], played: false, score: null, events: [], redCards: [] });
       // Round 3
-      this.groupMatches.push({ id: `${letter}_5`, group: letter, home: grpTeams[0], away: grpTeams[3], played: false, score: null, events: [] });
-      this.groupMatches.push({ id: `${letter}_6`, group: letter, home: grpTeams[1], away: grpTeams[2], played: false, score: null, events: [] });
+      this.groupMatches.push({ id: `${letter}_5`, group: letter, home: grpTeams[0], away: grpTeams[3], played: false, score: null, events: [], redCards: [] });
+      this.groupMatches.push({ id: `${letter}_6`, group: letter, home: grpTeams[1], away: grpTeams[2], played: false, score: null, events: [], redCards: [] });
     });
+
+    // ─── RESULTADOS REALES FIJOS (Jornada 1 – 11 Junio 2026) ───────────────────
+    this._applyFixedGroupResults();
+  }
+
+  // Pre-load real results so they are never overridden by simulation
+  _applyFixedGroupResults() {
+    const grpA = this.groups["A"];
+
+    // ── Partido A_1: México 2 – 0 Sudáfrica ─────────────────────────────────
+    // Goles: Julian Quinones (9', sin asist.), Raul Jimenez (67', asist. Roberto Alvarado)
+    // Rojas: Sphephelo Sithole (RSA 49'), Themba Zwane (RSA 84'), Cesar Montes (MEX 90+4')
+    const matchA1 = this.groupMatches.find(m => m.id === "A_1");
+    if (matchA1) {
+      const teamMEX = grpA.find(t => t.id === "MEX");
+      const teamRSA = grpA.find(t => t.id === "RSA");
+
+      matchA1.played = true;
+      matchA1.fixed  = true;
+      matchA1.score  = { home: 2, away: 0 };
+      matchA1.events = [
+        { minute: 9,  team: "home", scorer: "Julian Quinones", assister: null },
+        { minute: 67, team: "home", scorer: "Raul Jimenez",    assister: "Roberto Alvarado" }
+      ];
+      matchA1.redCards = [
+        { minute: 49, team: "away", player: "Sphephelo Sithole" },
+        { minute: 84, team: "away", player: "Themba Zwane"      },
+        { minute: 94, team: "home", player: "Cesar Montes"      }
+      ];
+
+      if (teamMEX && teamRSA) {
+        teamMEX.played += 1; teamRSA.played += 1;
+        teamMEX.won    += 1; teamRSA.lost   += 1;
+        teamMEX.points += 3;
+        teamMEX.goalsFor      += 2; teamMEX.goalsAgainst += 0;
+        teamRSA.goalsFor      += 0; teamRSA.goalsAgainst += 2;
+        teamMEX.goalDifference = teamMEX.goalsFor - teamMEX.goalsAgainst;
+        teamRSA.goalDifference = teamRSA.goalsFor - teamRSA.goalsAgainst;
+      }
+
+      if (this.playerStats["mex_julianquinones"])  this.playerStats["mex_julianquinones"].goals   += 1;
+      if (this.playerStats["mex_rauljimenez"])     this.playerStats["mex_rauljimenez"].goals       += 1;
+      if (this.playerStats["mex_robertoalvarado"]) this.playerStats["mex_robertoalvarado"].assists += 1;
+      ["MEX", "RSA"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+
+      // ── Suspensiones por tarjeta roja ─────────────────────────────────────
+      // Cesar Montes (MEX) – roja 90+4': no puede jugar el siguiente partido de MEX
+      const montes = this.findTeam("MEX")?.squad.find(p => p.id === "mex_cesarmontes");
+      if (montes) montes.suspended = true;
+      // Sphephelo Sithole (RSA) – roja 49': no puede jugar el siguiente partido de RSA
+      const sithole = this.findTeam("RSA")?.squad.find(p => p.id === "rsa_sphephelosithole");
+      if (sithole) sithole.suspended = true;
+      // Themba Zwane (RSA) – roja 84': no puede jugar el siguiente partido de RSA
+      const zwane = this.findTeam("RSA")?.squad.find(p => p.id === "rsa_thembazwane");
+      if (zwane) zwane.suspended = true;
+    }
+
+    // ── Partido A_2: Corea del Sur 2 – 1 Rep. Checa ──────────────────────────
+    // Goles: Ladislav Krejci (CZE 59', asist. Vladimir Coufal),
+    //         Hwang Inbeom (KOR 67', sin asist.), Oh Hyeongyu (KOR 80', asist. Hwang Inbeom)
+    // Rojas: ninguna
+    const matchA2 = this.groupMatches.find(m => m.id === "A_2");
+    if (matchA2) {
+      const teamKOR = grpA.find(t => t.id === "KOR");
+      const teamCZE = grpA.find(t => t.id === "CZE");
+
+      matchA2.played = true;
+      matchA2.fixed  = true;
+      matchA2.score  = { home: 2, away: 1 };
+      matchA2.events = [
+        { minute: 59, team: "away", scorer: "Ladislav Krejci", assister: "Vladimir Coufal" },
+        { minute: 67, team: "home", scorer: "Hwang Inbeom",    assister: null },
+        { minute: 80, team: "home", scorer: "Oh Hyeongyu",     assister: "Hwang Inbeom" }
+      ];
+      matchA2.redCards = [];
+
+      if (teamKOR && teamCZE) {
+        teamKOR.played += 1; teamCZE.played += 1;
+        teamKOR.won    += 1; teamCZE.lost   += 1;
+        teamKOR.points += 3;
+        teamKOR.goalsFor      += 2; teamKOR.goalsAgainst += 1;
+        teamCZE.goalsFor      += 1; teamCZE.goalsAgainst += 2;
+        teamKOR.goalDifference = teamKOR.goalsFor - teamKOR.goalsAgainst;
+        teamCZE.goalDifference = teamCZE.goalsFor - teamCZE.goalsAgainst;
+      }
+
+      if (this.playerStats["cze_ladislavkrejci"])  this.playerStats["cze_ladislavkrejci"].goals   += 1;
+      if (this.playerStats["kor_hwanginbeom"])      this.playerStats["kor_hwanginbeom"].goals       += 1;
+      if (this.playerStats["kor_ohhyeongyu"])       this.playerStats["kor_ohhyeongyu"].goals        += 1;
+      if (this.playerStats["cze_vladimircoufal"])   this.playerStats["cze_vladimircoufal"].assists  += 1;
+      if (this.playerStats["kor_hwanginbeom"])      this.playerStats["kor_hwanginbeom"].assists     += 1;
+      ["KOR", "CZE"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
   }
 
   // Find a team in the current state by ID
@@ -168,26 +269,27 @@ export class WorldCupSimulator {
     return this.teams.find(t => t.id === id);
   }
 
-  // Get active playing 11 for a match (1 GK, 4 DEF, 3 MED, 3 DEL, replacing injured starters with healthy bench players of same position)
+  // Get active playing 11 for a match (1 GK, 4 DEF, 3 MED, 3 DEL, replacing injured/suspended starters with bench players)
   getPlayingLineup(team) {
     const starters = team.squad.filter(p => p.isStarter);
-    const healthyStarters = starters.filter(p => !p.injured);
-    const injuredStarters = starters.filter(p => p.injured);
+    // Suspended players are treated like injured: they cannot play
+    const healthyStarters = starters.filter(p => !p.injured && !p.suspended);
+    const unavailableStarters = starters.filter(p => p.injured || p.suspended);
 
-    if (injuredStarters.length === 0) {
+    if (unavailableStarters.length === 0) {
       return starters;
     }
 
     const playing = [...healthyStarters];
     
-    // Find bench players (not starter, not injured)
-    const bench = team.squad.filter(p => !p.isStarter && !p.injured);
+    // Find bench players (not starter, not injured, not suspended)
+    const bench = team.squad.filter(p => !p.isStarter && !p.injured && !p.suspended);
     
     // Sort bench by rating descending so we choose the best substitutes
     bench.sort((a, b) => b.rating - a.rating);
 
-    for (const injuredPlayer of injuredStarters) {
-      const pos = injuredPlayer.position;
+    for (const unavailablePlayer of unavailableStarters) {
+      const pos = unavailablePlayer.position;
       const rIdx = bench.findIndex(p => p.position === pos);
       if (rIdx !== -1) {
         // Found a same position bench player
@@ -199,8 +301,8 @@ export class WorldCupSimulator {
           const replacement = bench.shift();
           playing.push(replacement);
         } else {
-          // Fallback: keep the injured starter if there are no bench players left at all
-          playing.push(injuredPlayer);
+          // Fallback: use the unavailable player only if truly no one else is left
+          if (!unavailablePlayer.suspended) playing.push(unavailablePlayer);
         }
       }
     }
@@ -208,8 +310,19 @@ export class WorldCupSimulator {
     return playing;
   }
 
+  // Clear suspensions for all squad members of a team after they have served their ban
+  _clearSuspensions(teamId) {
+    const team = this.findTeam(teamId);
+    if (team) {
+      team.squad.forEach(p => { p.suspended = false; });
+    }
+  }
+
   // Simulate a single match between two teams
   simulateMatch(teamA, teamB, isKnockout = false) {
+    const suspendedBeforeA = teamA.squad.filter(p => p.suspended);
+    const suspendedBeforeB = teamB.squad.filter(p => p.suspended);
+
     const lineupA = this.getPlayingLineup(teamA);
     const lineupB = this.getPlayingLineup(teamB);
 
@@ -333,6 +446,29 @@ export class WorldCupSimulator {
     // Sort events by minute
     events.sort((a, b) => a.minute - b.minute);
 
+    // ── Simular Tarjetas Rojas ─────────────────────────────────────────────
+    const redCards = [];
+    const simulateLineupRedCards = (lineup, teamType) => {
+      const outfield = lineup.filter(p => p.position !== "POR");
+      const candidates = outfield.length > 0 ? outfield : lineup;
+      if (Math.random() < 0.06 && candidates.length > 0) {
+        const player = candidates[Math.floor(Math.random() * candidates.length)];
+        player.suspended = true;
+        const minute = Math.floor(Math.random() * 90) + 1;
+        redCards.push({
+          minute,
+          team: teamType,
+          player: player.name
+        });
+      }
+    };
+    simulateLineupRedCards(lineupA, "home");
+    simulateLineupRedCards(lineupB, "away");
+
+    // Limpiar suspensiones que existían ANTES del partido (ya cumplieron sanción)
+    suspendedBeforeA.forEach(p => { p.suspended = false; });
+    suspendedBeforeB.forEach(p => { p.suspended = false; });
+
     let result = {
       goalsA,
       goalsB,
@@ -340,6 +476,7 @@ export class WorldCupSimulator {
       penalties: false,
       penaltyScore: null,
       events,
+      redCards,
       winner: null
     };
 
@@ -425,6 +562,7 @@ export class WorldCupSimulator {
         const res = this.simulateMatch(teamH, teamA, false);
         m.score = { home: res.goalsA, away: res.goalsB };
         m.events = res.events;
+        m.redCards = res.redCards || [];
         m.played = true;
 
         // Update tables
@@ -610,6 +748,7 @@ export class WorldCupSimulator {
     const res = this.simulateMatch(m.home, m.away, true);
     m.score = { home: res.goalsA, away: res.goalsB };
     m.winner = res.winner === "A" ? "home" : "away";
+    m.redCards = res.redCards || [];
     m.details = res;
     m.played = true;
   }
