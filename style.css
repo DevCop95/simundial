@@ -424,8 +424,43 @@ header {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.bracket-matches-container {
+  display: flex;
+  flex-direction: column;
+  height: 1440px;
+  box-sizing: border-box;
+}
+
+.match-card-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.r32-container .match-card-wrapper {
+  height: 90px;
+}
+
+.r16-container .match-card-wrapper {
+  height: 180px;
+}
+
+.qf-container .match-card-wrapper {
+  height: 360px;
+}
+
+.sf-container .match-card-wrapper {
+  height: 720px;
+}
+
+.finals-container .match-card-wrapper {
+  height: 720px;
 }
 
 .bracket-column-title {

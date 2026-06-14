@@ -172,6 +172,7 @@ export class WorldCupSimulator {
     const grpB = this.groups["B"];
     const grpC = this.groups["C"];
     const grpD = this.groups["D"];
+    const grpE = this.groups["E"];
 
     // ── Partido A_1: México 2 – 0 Sudáfrica ─────────────────────────────────
     // Goles: Julian Quinones (9', sin asist.), Raul Jimenez (67', asist. Roberto Alvarado)
@@ -490,6 +491,61 @@ export class WorldCupSimulator {
       if (this.playerStats["aus_paulokonengstler"])   this.playerStats["aus_paulokonengstler"].assists += 1;
       if (this.playerStats["aus_connormetcalfe"])     this.playerStats["aus_connormetcalfe"].goals     += 1;
       ["AUS", "TUR"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO E
+    // ==========================================
+
+    // ── Partido E_1: Alemania 7 – 1 Curaçao ────────────────────────────────
+    // Goles: Felix Nmecha (GER 6', asist. Florian Wirtz), Livano Comenencia (CUW 21'),
+    //        Nico Schlotterbeck (GER 38'), Kai Havertz (GER 45+5' pen, GER 88'),
+    //        Jamal Musiala (GER 47'), Nathaniel Brown (GER 68'), Deniz Undav (GER 78', asist. Joshua Kimmich)
+    const matchE1 = this.groupMatches.find(m => m.id === "E_1");
+    if (matchE1) {
+      const teamGER = grpE.find(t => t.id === "GER");
+      const teamCUW = grpE.find(t => t.id === "CUW");
+
+      matchE1.played = true;
+      matchE1.fixed  = true;
+      matchE1.score  = { home: 7, away: 1 };
+      matchE1.events = [
+        { minute: 6,   team: "home", scorer: "Felix Nmecha",        assister: "Florian Wirtz" },
+        { minute: 21,  team: "away", scorer: "Livano Comenencia",   assister: null },
+        { minute: 38,  team: "home", scorer: "Nico Schlotterbeck",  assister: null },
+        { minute: 45,  team: "home", scorer: "Kai Havertz",         assister: null },
+        { minute: 47,  team: "home", scorer: "Jamal Musiala",       assister: null },
+        { minute: 68,  team: "home", scorer: "Nathaniel Brown",     assister: null },
+        { minute: 78,  team: "home", scorer: "Deniz Undav",         assister: "Joshua Kimmich" },
+        { minute: 88,  team: "home", scorer: "Kai Havertz",         assister: null }
+      ];
+      matchE1.redCards = [];
+
+      if (teamGER && teamCUW) {
+        teamGER.played += 1; teamCUW.played += 1;
+        teamGER.won    += 1; teamCUW.lost   += 1;
+        teamGER.points += 3;
+        teamGER.goalsFor      += 7; teamGER.goalsAgainst += 1;
+        teamCUW.goalsFor      += 1; teamCUW.goalsAgainst += 7;
+        teamGER.goalDifference = teamGER.goalsFor - teamGER.goalsAgainst;
+        teamCUW.goalDifference = teamCUW.goalsFor - teamCUW.goalsAgainst;
+      }
+
+      if (this.playerStats["ger_felixnmecha"])        this.playerStats["ger_felixnmecha"].goals        += 1;
+      if (this.playerStats["ger_nicoschlotterbeck"])  this.playerStats["ger_nicoschlotterbeck"].goals  += 1;
+      if (this.playerStats["ger_kaihavertz"])         this.playerStats["ger_kaihavertz"].goals         += 2;
+      if (this.playerStats["ger_jamalmusiala"])       this.playerStats["ger_jamalmusiala"].goals       += 1;
+      if (this.playerStats["ger_nathanielbrown"])     this.playerStats["ger_nathanielbrown"].goals     += 1;
+      if (this.playerStats["ger_denizundav"])         this.playerStats["ger_denizundav"].goals         += 1;
+      if (this.playerStats["ger_florianwirtz"])       this.playerStats["ger_florianwirtz"].assists     += 1;
+      if (this.playerStats["ger_joshuakimmich"])      this.playerStats["ger_joshuakimmich"].assists    += 1;
+      if (this.playerStats["cuw_livanocomenencia"])   this.playerStats["cuw_livanocomenencia"].goals   += 1;
+
+      ["GER", "CUW"].forEach(id => {
         this.findTeam(id)?.squad.forEach(p => {
           if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
         });

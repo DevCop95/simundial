@@ -535,7 +535,10 @@ function renderBracketColumn(containerId, matches, phase) {
       card.appendChild(simMatchBtn);
     }
 
-    container.appendChild(card);
+    const wrapper = document.createElement("div");
+    wrapper.className = "match-card-wrapper";
+    wrapper.appendChild(card);
+    container.appendChild(wrapper);
   });
 }
 
@@ -563,10 +566,8 @@ function renderBracketFinals() {
     thirdTitle.style.fontSize = "0.75rem";
     thirdTitle.style.fontWeight = "700";
     thirdTitle.style.color = "var(--text-muted)";
-    thirdTitle.style.marginTop = "0.5rem";
     thirdTitle.style.textAlign = "center";
     thirdTitle.innerText = "Tercer Puesto";
-    container.appendChild(thirdTitle);
 
     const m = third;
     const card = document.createElement("div");
@@ -631,7 +632,19 @@ function renderBracketFinals() {
       });
       card.appendChild(simMatchBtn);
     }
-    container.appendChild(card);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "match-card-wrapper";
+    const stack = document.createElement("div");
+    stack.style.display = "flex";
+    stack.style.flexDirection = "column";
+    stack.style.gap = "0.25rem";
+    stack.style.width = "100%";
+    stack.style.maxWidth = "240px";
+    stack.appendChild(thirdTitle);
+    stack.appendChild(card);
+    wrapper.appendChild(stack);
+    container.appendChild(wrapper);
   }
 
   // Render Grand Final Match
@@ -640,10 +653,8 @@ function renderBracketFinals() {
     finalTitle.style.fontSize = "0.75rem";
     finalTitle.style.fontWeight = "800";
     finalTitle.style.color = "var(--primary)";
-    finalTitle.style.marginTop = "1rem";
     finalTitle.style.textAlign = "center";
     finalTitle.innerText = "GRAN FINAL";
-    container.appendChild(finalTitle);
 
     const m = final;
     const card = document.createElement("div");
@@ -713,7 +724,19 @@ function renderBracketFinals() {
       });
       card.appendChild(simMatchBtn);
     }
-    container.appendChild(card);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "match-card-wrapper";
+    const stack = document.createElement("div");
+    stack.style.display = "flex";
+    stack.style.flexDirection = "column";
+    stack.style.gap = "0.25rem";
+    stack.style.width = "100%";
+    stack.style.maxWidth = "240px";
+    stack.appendChild(finalTitle);
+    stack.appendChild(card);
+    wrapper.appendChild(stack);
+    container.appendChild(wrapper);
   }
 }
 
