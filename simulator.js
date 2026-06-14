@@ -169,6 +169,9 @@ export class WorldCupSimulator {
   // Pre-load real results so they are never overridden by simulation
   _applyFixedGroupResults() {
     const grpA = this.groups["A"];
+    const grpB = this.groups["B"];
+    const grpC = this.groups["C"];
+    const grpD = this.groups["D"];
 
     // ── Partido A_1: México 2 – 0 Sudáfrica ─────────────────────────────────
     // Goles: Julian Quinones (9', sin asist.), Raul Jimenez (67', asist. Roberto Alvarado)
@@ -262,6 +265,246 @@ export class WorldCupSimulator {
         });
       });
     }
+
+    // ── Partido B_1: Canadá 1 – 1 Bosnia-Herz. ───────────────────────────
+    // Goles: Jovo Lukic (BIH 21', asist. Sead Kolasinac), Cyle Larin (CAN 78', asist. Promise David)
+    const matchB1 = this.groupMatches.find(m => m.id === "B_1");
+    if (matchB1) {
+      const teamCAN = grpB.find(t => t.id === "CAN");
+      const teamBIH = grpB.find(t => t.id === "BIH");
+
+      matchB1.played = true;
+      matchB1.fixed  = true;
+      matchB1.score  = { home: 1, away: 1 };
+      matchB1.events = [
+        { minute: 21, team: "away", scorer: "Jovo Lukic",     assister: "Sead Kolasinac" },
+        { minute: 78, team: "home", scorer: "Cyle Larin",     assister: "Promise David" }
+      ];
+      matchB1.redCards = [];
+
+      if (teamCAN && teamBIH) {
+        teamCAN.played += 1; teamBIH.played += 1;
+        teamCAN.drawn  += 1; teamBIH.drawn  += 1;
+        teamCAN.points += 1; teamBIH.points += 1;
+        teamCAN.goalsFor      += 1; teamCAN.goalsAgainst += 1;
+        teamBIH.goalsFor      += 1; teamBIH.goalsAgainst += 1;
+        teamCAN.goalDifference = teamCAN.goalsFor - teamCAN.goalsAgainst;
+        teamBIH.goalDifference = teamBIH.goalsFor - teamBIH.goalsAgainst;
+      }
+
+      if (this.playerStats["can_cylelarin"])      this.playerStats["can_cylelarin"].goals     += 1;
+      if (this.playerStats["can_promisedavid"])   this.playerStats["can_promisedavid"].assists += 1;
+      if (this.playerStats["bih_jovolukic"])      this.playerStats["bih_jovolukic"].goals     += 1;
+      if (this.playerStats["bih_seadkolasinac"])  this.playerStats["bih_seadkolasinac"].assists += 1;
+      ["CAN", "BIH"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido B_2: Catar 1 – 1 Suiza ────────────────────────────────────
+    // Goles: Breel Embolo (SUI 17' pen, sin asist.), Boualem Khoukhi (QAT 94', asist. Homam Ahmed)
+    const matchB2 = this.groupMatches.find(m => m.id === "B_2");
+    if (matchB2) {
+      const teamQAT = grpB.find(t => t.id === "QAT");
+      const teamSUI = grpB.find(t => t.id === "SUI");
+
+      matchB2.played = true;
+      matchB2.fixed  = true;
+      matchB2.score  = { home: 1, away: 1 };
+      matchB2.events = [
+        { minute: 17, team: "away", scorer: "Breel Embolo",     assister: null },
+        { minute: 94, team: "home", scorer: "Boualem Khoukhi",  assister: "Homam Ahmed" }
+      ];
+      matchB2.redCards = [];
+
+      if (teamQAT && teamSUI) {
+        teamQAT.played += 1; teamSUI.played += 1;
+        teamQAT.drawn  += 1; teamSUI.drawn  += 1;
+        teamQAT.points += 1; teamSUI.points += 1;
+        teamQAT.goalsFor      += 1; teamQAT.goalsAgainst += 1;
+        teamSUI.goalsFor      += 1; teamSUI.goalsAgainst += 1;
+        teamQAT.goalDifference = teamQAT.goalsFor - teamQAT.goalsAgainst;
+        teamSUI.goalDifference = teamSUI.goalsFor - teamSUI.goalsAgainst;
+      }
+
+      if (this.playerStats["sui_breelembolo"])      this.playerStats["sui_breelembolo"].goals     += 1;
+      if (this.playerStats["qat_boualemkhoukhi"])   this.playerStats["qat_boualemkhoukhi"].goals  += 1;
+      if (this.playerStats["qat_homamahmed"])       this.playerStats["qat_homamahmed"].assists     += 1;
+      ["QAT", "SUI"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO C
+    // ==========================================
+
+    // ── Partido C_1: Brasil 1 – 1 Marruecos ───────────────────────────────
+    // Goles: Ismael Saibari (MAR 21', asist. Brahim Diaz), Vinicius Junior (BRA 32', asist. Bruno Guimaraes)
+    const matchC1 = this.groupMatches.find(m => m.id === "C_1");
+    if (matchC1) {
+      const teamBRA = grpC.find(t => t.id === "BRA");
+      const teamMAR = grpC.find(t => t.id === "MAR");
+
+      matchC1.played = true;
+      matchC1.fixed  = true;
+      matchC1.score  = { home: 1, away: 1 };
+      matchC1.events = [
+        { minute: 21, team: "away", scorer: "Ismael Saibari",     assister: "Brahim Diaz" },
+        { minute: 32, team: "home", scorer: "Vinicius Junior",    assister: "Bruno Guimaraes" }
+      ];
+      matchC1.redCards = [];
+
+      if (teamBRA && teamMAR) {
+        teamBRA.played += 1; teamMAR.played += 1;
+        teamBRA.drawn  += 1; teamMAR.drawn  += 1;
+        teamBRA.points += 1; teamMAR.points += 1;
+        teamBRA.goalsFor      += 1; teamBRA.goalsAgainst += 1;
+        teamMAR.goalsFor      += 1; teamMAR.goalsAgainst += 1;
+        teamBRA.goalDifference = teamBRA.goalsFor - teamBRA.goalsAgainst;
+        teamMAR.goalDifference = teamMAR.goalsFor - teamMAR.goalsAgainst;
+      }
+
+      if (this.playerStats["bra_viniciusjunior"])   this.playerStats["bra_viniciusjunior"].goals   += 1;
+      if (this.playerStats["bra_brunoguimaraes"])   this.playerStats["bra_brunoguimaraes"].assists += 1;
+      if (this.playerStats["mar_ismaelsaibari"])    this.playerStats["mar_ismaelsaibari"].goals    += 1;
+      if (this.playerStats["mar_brahimdiaz"])       this.playerStats["mar_brahimdiaz"].assists     += 1;
+      ["BRA", "MAR"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido C_2: Haití 0 – 1 Escocia ──────────────────────────────────
+    // Goles: John McGinn (SCO 29', sin asist.)
+    const matchC2 = this.groupMatches.find(m => m.id === "C_2");
+    if (matchC2) {
+      const teamHAI = grpC.find(t => t.id === "HAI");
+      const teamSCO = grpC.find(t => t.id === "SCO");
+
+      matchC2.played = true;
+      matchC2.fixed  = true;
+      matchC2.score  = { home: 0, away: 1 };
+      matchC2.events = [
+        { minute: 29, team: "away", scorer: "John McGinn",     assister: null }
+      ];
+      matchC2.redCards = [];
+
+      if (teamHAI && teamSCO) {
+        teamHAI.played += 1; teamSCO.played += 1;
+        teamSCO.won    += 1; teamHAI.lost   += 1;
+        teamSCO.points += 3;
+        teamHAI.goalsFor      += 0; teamHAI.goalsAgainst += 1;
+        teamSCO.goalsFor      += 1; teamSCO.goalsAgainst += 0;
+        teamHAI.goalDifference = teamHAI.goalsFor - teamHAI.goalsAgainst;
+        teamSCO.goalDifference = teamSCO.goalsFor - teamSCO.goalsAgainst;
+      }
+
+      if (this.playerStats["sco_johnmcginn"])       this.playerStats["sco_johnmcginn"].goals       += 1;
+      ["HAI", "SCO"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO D
+    // ==========================================
+
+    // ── Partido D_1: Estados Unidos 4 – 1 Paraguay ────────────────────────
+    // Goles: Damian Bobadilla (PRY 7' OG), Folarin Balogun (USA 31', asist. Christian Pulisic), Folarin Balogun (USA 45', asist. Malik Tillman), Mauricio (PRY 73', asist. Julio Enciso), Giovanni Reyna (USA 90', asist. Alex Freeman)
+    const matchD1 = this.groupMatches.find(m => m.id === "D_1");
+    if (matchD1) {
+      const teamUSA = grpD.find(t => t.id === "USA");
+      const teamPRY = grpD.find(t => t.id === "PRY");
+
+      matchD1.played = true;
+      matchD1.fixed  = true;
+      matchD1.score  = { home: 4, away: 1 };
+      matchD1.events = [
+        { minute: 7,  team: "home", scorer: "Damian Bobadilla (Autogol)", assister: null },
+        { minute: 31, team: "home", scorer: "Folarin Balogun",            assister: "Christian Pulisic" },
+        { minute: 45, team: "home", scorer: "Folarin Balogun",            assister: "Malik Tillman" },
+        { minute: 73, team: "away", scorer: "Mauricio",                   assister: "Julio Enciso" },
+        { minute: 90, team: "home", scorer: "Giovanni Reyna",             assister: "Alex Freeman" }
+      ];
+      matchD1.redCards = [];
+
+      if (teamUSA && teamPRY) {
+        teamUSA.played += 1; teamPRY.played += 1;
+        teamUSA.won    += 1; teamPRY.lost   += 1;
+        teamUSA.points += 3;
+        teamUSA.goalsFor      += 4; teamUSA.goalsAgainst += 1;
+        teamPRY.goalsFor      += 1; teamPRY.goalsAgainst += 4;
+        teamUSA.goalDifference = teamUSA.goalsFor - teamUSA.goalsAgainst;
+        teamPRY.goalDifference = teamPRY.goalsFor - teamPRY.goalsAgainst;
+      }
+
+      if (this.playerStats["usa_folarinbalogun"])    this.playerStats["usa_folarinbalogun"].goals    += 2;
+      if (this.playerStats["usa_giovannireyna"])    this.playerStats["usa_giovannireyna"].goals     += 1;
+      if (this.playerStats["usa_christianpulisic"])  this.playerStats["usa_christianpulisic"].assists += 1;
+      if (this.playerStats["usa_maliktillman"])      this.playerStats["usa_maliktillman"].assists     += 1;
+      if (this.playerStats["usa_alexfreeman"])      this.playerStats["usa_alexfreeman"].assists     += 1;
+      if (this.playerStats["pry_mauricio"])          this.playerStats["pry_mauricio"].goals          += 1;
+      if (this.playerStats["pry_julioenciso"])      this.playerStats["pry_julioenciso"].assists     += 1;
+      ["USA", "PRY"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido D_2: Australia 2 – 0 Turquía ──────────────────────────────
+    // Goles: Nestory Irankunda (AUS 27', asist. Paul Okon-engstler), Connor Metcalfe (AUS 75', sin asist.)
+    const matchD2 = this.groupMatches.find(m => m.id === "D_2");
+    if (matchD2) {
+      const teamAUS = grpD.find(t => t.id === "AUS");
+      const teamTUR = grpD.find(t => t.id === "TUR");
+
+      matchD2.played = true;
+      matchD2.fixed  = true;
+      matchD2.score  = { home: 2, away: 0 };
+      matchD2.events = [
+        { minute: 27, team: "home", scorer: "Nestory Irankunda",   assister: "Paul Okon-engstler" },
+        { minute: 75, team: "home", scorer: "Connor Metcalfe",     assister: null }
+      ];
+      matchD2.redCards = [];
+
+      if (teamAUS && teamTUR) {
+        teamAUS.played += 1; teamTUR.played += 1;
+        teamAUS.won    += 1; teamTUR.lost   += 1;
+        teamAUS.points += 3;
+        teamAUS.goalsFor      += 2; teamAUS.goalsAgainst += 0;
+        teamTUR.goalsFor      += 0; teamTUR.goalsAgainst += 2;
+        teamAUS.goalDifference = teamAUS.goalsFor - teamAUS.goalsAgainst;
+        teamTUR.goalDifference = teamTUR.goalsFor - teamTUR.goalsAgainst;
+      }
+
+      if (this.playerStats["aus_nestoryirankunda"])   this.playerStats["aus_nestoryirankunda"].goals   += 1;
+      if (this.playerStats["aus_paulokonengstler"])   this.playerStats["aus_paulokonengstler"].assists += 1;
+      if (this.playerStats["aus_connormetcalfe"])     this.playerStats["aus_connormetcalfe"].goals     += 1;
+      ["AUS", "TUR"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // Sort all groups standings after preloading results
+    Object.keys(this.groups).forEach(letter => {
+      this.groups[letter].sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+        if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+        return 0; // Stable sort fallback (relative order preserved)
+      });
+    });
   }
 
   // Find a team in the current state by ID

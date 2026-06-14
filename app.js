@@ -15,13 +15,16 @@ async function fetchPlayerImage(player, imgElement) {
   // 1. Use official FIFA photo if available
   if (player.photo) {
     imgElement.src = player.photo;
+    imgElement.classList.add("fifa-avatar");
     imgElement.onerror = () => {
       imgElement.onerror = null;
+      imgElement.classList.remove("fifa-avatar");
       fetchWikipediaImage(playerName, imgElement);
     };
     return;
   }
 
+  imgElement.classList.remove("fifa-avatar");
   // 2. No official photo — try Wikipedia
   await fetchWikipediaImage(playerName, imgElement);
 }
@@ -864,9 +867,12 @@ function renderTacticalPitch(team) {
     node.style.top = coords.y;
 
     // Avatar image
+    const avatarWrapper = document.createElement("div");
+    avatarWrapper.className = "pitch-player-avatar-wrapper";
     const avatarImg = document.createElement("img");
     avatarImg.className = "pitch-player-avatar";
     fetchPlayerImage(player, avatarImg);
+    avatarWrapper.appendChild(avatarImg);
 
     // Rating Badge overlay
     const ratingBadge = document.createElement("span");
@@ -878,7 +884,7 @@ function renderTacticalPitch(team) {
     nameLabel.className = "pitch-player-name";
     nameLabel.innerText = player.name.split(" ").pop(); // Show last name to fit
 
-    node.appendChild(avatarImg);
+    node.appendChild(avatarWrapper);
     node.appendChild(ratingBadge);
     node.appendChild(nameLabel);
 
@@ -942,9 +948,12 @@ function renderSquadList(team) {
     infoLeft.className = "player-info-left";
 
     // Player Face Avatar dynamically loaded from Wikipedia
+    const avatarWrapper = document.createElement("div");
+    avatarWrapper.className = "player-avatar-wrapper";
     const avatarImg = document.createElement("img");
     avatarImg.className = "player-avatar";
     fetchPlayerImage(player, avatarImg);
+    avatarWrapper.appendChild(avatarImg);
     
     const posTag = document.createElement("span");
     posTag.className = `player-pos-tag pos-${player.position}`;
@@ -973,7 +982,7 @@ function renderSquadList(team) {
       <div class="player-meta">EDAD: ${player.age} | RATING: ${player.rating}</div>
     `;
 
-    infoLeft.appendChild(avatarImg);
+    infoLeft.appendChild(avatarWrapper);
     infoLeft.appendChild(posTag);
     infoLeft.appendChild(infoText);
 

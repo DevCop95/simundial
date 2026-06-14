@@ -741,7 +741,7 @@ header {
   filter: sepia(1) saturate(3) hue-rotate(300deg) opacity(0.75);
 }
 
-.pitch-player.suspended-state .pitch-player-avatar {
+.pitch-player.suspended-state .pitch-player-avatar-wrapper {
   filter: sepia(1) saturate(3) hue-rotate(300deg) opacity(0.8);
   border: 2px solid #dc2626 !important;
 }
@@ -752,14 +752,23 @@ header {
   gap: 0.75rem;
 }
 
-.player-avatar {
+.player-avatar-wrapper {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover;
-  object-position: center 15%;
   border: 1px solid var(--glass-border);
   background: #e2e8f0;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.player-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  transition: transform var(--transition-speed) ease;
 }
 
 .player-pos-tag {
@@ -1073,13 +1082,22 @@ input:checked ~ .injury-label {
   gap: 0.5rem;
 }
 
-.award-winner-avatar {
+.award-winner-avatar-wrapper {
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.award-winner-avatar {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center 15%;
-  border: 1px solid var(--glass-border);
+  transition: transform var(--transition-speed) ease;
 }
 
 .award-winner-name {
@@ -1172,7 +1190,7 @@ input:checked ~ .injury-label {
     height: 300px;
   }
 
-  .pitch-player-avatar {
+  .pitch-player-avatar-wrapper {
     width: 32px;
     height: 32px;
   }
@@ -1217,7 +1235,7 @@ input:checked ~ .injury-label {
     gap: 0.5rem;
   }
 
-  .player-avatar {
+  .player-avatar-wrapper {
     width: 30px;
     height: 30px;
   }
@@ -1329,21 +1347,29 @@ input:checked ~ .injury-label {
   transform: translate(-50%, -50%) scale(1.08);
 }
 
-.pitch-player.selected .pitch-player-avatar {
+.pitch-player.selected .pitch-player-avatar-wrapper {
   border-color: var(--primary);
   box-shadow: 0 0 12px var(--primary);
 }
 
-.pitch-player-avatar {
+.pitch-player-avatar-wrapper {
   width: 42px;
   height: 42px;
   border-radius: 50%;
   border: 2px solid #ffffff;
-  object-fit: cover;
-  object-position: center 15%;
   background: #000000;
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   transition: all var(--transition-speed) ease;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.pitch-player-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  transition: transform var(--transition-speed) ease;
 }
 
 .pitch-player-name {
@@ -1375,9 +1401,16 @@ input:checked ~ .injury-label {
   border: 1px solid white;
 }
 
-.pitch-player.injured-state .pitch-player-avatar {
+.pitch-player.injured-state .pitch-player-avatar-wrapper {
   border-color: #ef4444;
   filter: grayscale(0.8) opacity(0.7);
+}
+
+/* Zoom effect for FIFA avatars to focus on their faces */
+.player-avatar.fifa-avatar,
+.pitch-player-avatar.fifa-avatar,
+.award-winner-avatar.fifa-avatar {
+  transform: scale(3.5) translateY(28%);
 }
 
 .pitch-player-injury-badge {
