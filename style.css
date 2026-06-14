@@ -431,36 +431,15 @@ header {
 .bracket-matches-container {
   display: flex;
   flex-direction: column;
-  height: 1440px;
-  box-sizing: border-box;
-}
-
-.match-card-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 1rem;
   width: 100%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  padding: 1rem;
   box-sizing: border-box;
-}
-
-.r32-container .match-card-wrapper {
-  height: 90px;
-}
-
-.r16-container .match-card-wrapper {
-  height: 180px;
-}
-
-.qf-container .match-card-wrapper {
-  height: 360px;
-}
-
-.sf-container .match-card-wrapper {
-  height: 720px;
-}
-
-.finals-container .match-card-wrapper {
-  height: 720px;
+  height: auto;
 }
 
 .bracket-column-title {

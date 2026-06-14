@@ -535,10 +535,7 @@ function renderBracketColumn(containerId, matches, phase) {
       card.appendChild(simMatchBtn);
     }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "match-card-wrapper";
-    wrapper.appendChild(card);
-    container.appendChild(wrapper);
+    container.appendChild(card);
   });
 }
 
@@ -633,18 +630,8 @@ function renderBracketFinals() {
       card.appendChild(simMatchBtn);
     }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "match-card-wrapper";
-    const stack = document.createElement("div");
-    stack.style.display = "flex";
-    stack.style.flexDirection = "column";
-    stack.style.gap = "0.25rem";
-    stack.style.width = "100%";
-    stack.style.maxWidth = "240px";
-    stack.appendChild(thirdTitle);
-    stack.appendChild(card);
-    wrapper.appendChild(stack);
-    container.appendChild(wrapper);
+    container.appendChild(thirdTitle);
+    container.appendChild(card);
   }
 
   // Render Grand Final Match
@@ -725,18 +712,8 @@ function renderBracketFinals() {
       card.appendChild(simMatchBtn);
     }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "match-card-wrapper";
-    const stack = document.createElement("div");
-    stack.style.display = "flex";
-    stack.style.flexDirection = "column";
-    stack.style.gap = "0.25rem";
-    stack.style.width = "100%";
-    stack.style.maxWidth = "240px";
-    stack.appendChild(finalTitle);
-    stack.appendChild(card);
-    wrapper.appendChild(stack);
-    container.appendChild(wrapper);
+    container.appendChild(finalTitle);
+    container.appendChild(card);
   }
 }
 
