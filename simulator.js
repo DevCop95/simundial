@@ -173,6 +173,9 @@ export class WorldCupSimulator {
     const grpC = this.groups["C"];
     const grpD = this.groups["D"];
     const grpE = this.groups["E"];
+    const grpF = this.groups["F"];
+    const grpG = this.groups["G"];
+    const grpH = this.groups["H"];
 
     // ── Partido A_1: México 2 – 0 Sudáfrica ─────────────────────────────────
     // Goles: Julian Quinones (9', sin asist.), Raul Jimenez (67', asist. Roberto Alvarado)
@@ -546,6 +549,289 @@ export class WorldCupSimulator {
       if (this.playerStats["cuw_livanocomenencia"])   this.playerStats["cuw_livanocomenencia"].goals   += 1;
 
       ["GER", "CUW"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido E_2: Costa de Marfil 1 – 0 Ecuador ─────────────────────────
+    // Goles: Amad Diallo (CIV 90', asist. Wilfried Singo)
+    const matchE2 = this.groupMatches.find(m => m.id === "E_2");
+    if (matchE2) {
+      const teamCIV = grpE.find(t => t.id === "CIV");
+      const teamECU = grpE.find(t => t.id === "ECU");
+
+      matchE2.played = true;
+      matchE2.fixed  = true;
+      matchE2.score  = { home: 1, away: 0 };
+      matchE2.events = [
+        { minute: 90, team: "home", scorer: "Amad Diallo", assister: "Wilfried Singo" }
+      ];
+      matchE2.redCards = [];
+
+      if (teamCIV && teamECU) {
+        teamCIV.played += 1; teamECU.played += 1;
+        teamCIV.won    += 1; teamECU.lost   += 1;
+        teamCIV.points += 3;
+        teamCIV.goalsFor      += 1; teamCIV.goalsAgainst += 0;
+        teamECU.goalsFor      += 0; teamECU.goalsAgainst += 1;
+        teamCIV.goalDifference = teamCIV.goalsFor - teamCIV.goalsAgainst;
+        teamECU.goalDifference = teamECU.goalsFor - teamECU.goalsAgainst;
+      }
+
+      if (this.playerStats["civ_amaddiallo"])    this.playerStats["civ_amaddiallo"].goals    += 1;
+      if (this.playerStats["civ_wilfriedsingo"])  this.playerStats["civ_wilfriedsingo"].assists += 1;
+
+      ["CIV", "ECU"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO F
+    // ==========================================
+
+    // ── Partido F_1: Países Bajos 2 – 2 Japón ──────────────────────────────
+    // Goles: Virgil Van Dijk (NED 51', asist. Ryan Gravenberch), Keito Nakamura (JPN 57', sin asist.),
+    //        Crysencio Summerville (NED 64', sin asist.), Daichi Kamada (JPN 89', asist. Kento Shiogai)
+    const matchF1 = this.groupMatches.find(m => m.id === "F_1");
+    if (matchF1) {
+      const teamNED = grpF.find(t => t.id === "NED");
+      const teamJPN = grpF.find(t => t.id === "JPN");
+
+      matchF1.played = true;
+      matchF1.fixed  = true;
+      matchF1.score  = { home: 2, away: 2 };
+      matchF1.events = [
+        { minute: 51, team: "home", scorer: "Virgil Van Dijk", assister: "Ryan Gravenberch" },
+        { minute: 57, team: "away", scorer: "Keito Nakamura",   assister: null },
+        { minute: 64, team: "home", scorer: "Crysencio Summerville", assister: null },
+        { minute: 89, team: "away", scorer: "Daichi Kamada",    assister: "Kento Shiogai" }
+      ];
+      matchF1.redCards = [];
+
+      if (teamNED && teamJPN) {
+        teamNED.played += 1; teamJPN.played += 1;
+        teamNED.drawn  += 1; teamJPN.drawn  += 1;
+        teamNED.points += 1; teamJPN.points += 1;
+        teamNED.goalsFor      += 2; teamNED.goalsAgainst += 2;
+        teamJPN.goalsFor      += 2; teamJPN.goalsAgainst += 2;
+        teamNED.goalDifference = teamNED.goalsFor - teamNED.goalsAgainst;
+        teamJPN.goalDifference = teamJPN.goalsFor - teamJPN.goalsAgainst;
+      }
+
+      if (this.playerStats["ned_virgilvandijk"])         this.playerStats["ned_virgilvandijk"].goals         += 1;
+      if (this.playerStats["ned_ryangravenberch"])       this.playerStats["ned_ryangravenberch"].assists     += 1;
+      if (this.playerStats["jpn_keitonakamura"])         this.playerStats["jpn_keitonakamura"].goals         += 1;
+      if (this.playerStats["ned_crysenciosummerville"])  this.playerStats["ned_crysenciosummerville"].goals  += 1;
+      if (this.playerStats["jpn_daichikamada"])           this.playerStats["jpn_daichikamada"].goals           += 1;
+      if (this.playerStats["jpn_kentoshiogai"])          this.playerStats["jpn_kentoshiogai"].assists        += 1;
+
+      ["NED", "JPN"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido F_2: Suecia 5 – 1 Túnez ────────────────────────────────────
+    // Goles: Yasin Ayari (SWE 7', asist. Viktor Gyokeres), Yasin Ayari (SWE 90+6', asist. Lucas Bergvall),
+    //        Alexander Isak (SWE 30', sin asist.), Viktor Gyokeres (SWE 59', asist. Alexander Isak),
+    //        Mattias Svanberg (SWE 84', asist. Alexander Isak), Omar Rekik (TUN 43', asist. Hannibal Mejbri)
+    const matchF2 = this.groupMatches.find(m => m.id === "F_2");
+    if (matchF2) {
+      const teamSWE = grpF.find(t => t.id === "SWE");
+      const teamTUN = grpF.find(t => t.id === "TUN");
+
+      matchF2.played = true;
+      matchF2.fixed  = true;
+      matchF2.score  = { home: 5, away: 1 };
+      matchF2.events = [
+        { minute: 7,  team: "home", scorer: "Yasin Ayari",       assister: "Viktor Gyokeres" },
+        { minute: 30, team: "home", scorer: "Alexander Isak",    assister: null },
+        { minute: 43, team: "away", scorer: "Omar Rekik",        assister: "Hannibal Mejbri" },
+        { minute: 59, team: "home", scorer: "Viktor Gyokeres",   assister: "Alexander Isak" },
+        { minute: 84, team: "home", scorer: "Mattias Svanberg",  assister: "Alexander Isak" },
+        { minute: 96, team: "home", scorer: "Yasin Ayari",       assister: "Lucas Bergvall" }
+      ];
+      matchF2.redCards = [];
+
+      if (teamSWE && teamTUN) {
+        teamSWE.played += 1; teamTUN.played += 1;
+        teamSWE.won    += 1; teamTUN.lost   += 1;
+        teamSWE.points += 3;
+        teamSWE.goalsFor      += 5; teamSWE.goalsAgainst += 1;
+        teamTUN.goalsFor      += 1; teamTUN.goalsAgainst += 5;
+        teamSWE.goalDifference = teamSWE.goalsFor - teamSWE.goalsAgainst;
+        teamTUN.goalDifference = teamTUN.goalsFor - teamTUN.goalsAgainst;
+      }
+
+      if (this.playerStats["swe_yasinayari"])        this.playerStats["swe_yasinayari"].goals        += 2;
+      if (this.playerStats["swe_alexanderisak"])     this.playerStats["swe_alexanderisak"].goals     += 1;
+      if (this.playerStats["swe_alexanderisak"])     this.playerStats["swe_alexanderisak"].assists   += 2;
+      if (this.playerStats["swe_viktorgyokeres"])    this.playerStats["swe_viktorgyokeres"].goals    += 1;
+      if (this.playerStats["swe_viktorgyokeres"])    this.playerStats["swe_viktorgyokeres"].assists  += 1;
+      if (this.playerStats["swe_mattiassvanberg"])   this.playerStats["swe_mattiassvanberg"].goals   += 1;
+      if (this.playerStats["swe_lucasbergvall"])     this.playerStats["swe_lucasbergvall"].assists   += 1;
+      if (this.playerStats["tun_omarrekik"])         this.playerStats["tun_omarrekik"].goals         += 1;
+      if (this.playerStats["tun_hannibalmejbri"])    this.playerStats["tun_hannibalmejbri"].assists  += 1;
+
+      ["SWE", "TUN"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO G
+    // ==========================================
+
+    // ── Partido G_1: Bélgica 1 – 1 Egipto ──────────────────────────────────
+    // Goles: Emam Ashour (EGY 19', asist. Mohamed Salah), Mohamed Hany (EGY 66' OG, sin asist.)
+    const matchG1 = this.groupMatches.find(m => m.id === "G_1");
+    if (matchG1) {
+      const teamBEL = grpG.find(t => t.id === "BEL");
+      const teamEGY = grpG.find(t => t.id === "EGY");
+
+      matchG1.played = true;
+      matchG1.fixed  = true;
+      matchG1.score  = { home: 1, away: 1 };
+      matchG1.events = [
+        { minute: 19, team: "away", scorer: "Emam Ashour",           assister: "Mohamed Salah" },
+        { minute: 66, team: "home", scorer: "Mohamed Hany (Autogol)", assister: null }
+      ];
+      matchG1.redCards = [];
+
+      if (teamBEL && teamEGY) {
+        teamBEL.played += 1; teamEGY.played += 1;
+        teamBEL.drawn  += 1; teamEGY.drawn  += 1;
+        teamBEL.points += 1; teamEGY.points += 1;
+        teamBEL.goalsFor      += 1; teamBEL.goalsAgainst += 1;
+        teamEGY.goalsFor      += 1; teamEGY.goalsAgainst += 1;
+        teamBEL.goalDifference = teamBEL.goalsFor - teamBEL.goalsAgainst;
+        teamEGY.goalDifference = teamEGY.goalsFor - teamEGY.goalsAgainst;
+      }
+
+      if (this.playerStats["egy_emamashour"])     this.playerStats["egy_emamashour"].goals    += 1;
+      if (this.playerStats["egy_mohamedsalah"])   this.playerStats["egy_mohamedsalah"].assists += 1;
+
+      ["BEL", "EGY"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido G_2: Irán 2 – 2 Nueva Zelanda ──────────────────────────────
+    // Goles: Elijah Just (NZL 7', asist. Chris Wood), Ramin Rezaeian (IRN 32', sin asist.),
+    //        Elijah Just (NZL 54', asist. Chris Wood), Mohammad Mohebbi (IRN 64', asist. Ramin Rezaeian)
+    const matchG2 = this.groupMatches.find(m => m.id === "G_2");
+    if (matchG2) {
+      const teamIRN = grpG.find(t => t.id === "IRN");
+      const teamNZL = grpG.find(t => t.id === "NZL");
+
+      matchG2.played = true;
+      matchG2.fixed  = true;
+      matchG2.score  = { home: 2, away: 2 };
+      matchG2.events = [
+        { minute: 7,  team: "away", scorer: "Elijah Just",     assister: "Chris Wood" },
+        { minute: 32, team: "home", scorer: "Ramin Rezaeian",  assister: null },
+        { minute: 54, team: "away", scorer: "Elijah Just",     assister: "Chris Wood" },
+        { minute: 64, team: "home", scorer: "Mohammad Mohebbi", assister: "Ramin Rezaeian" }
+      ];
+      matchG2.redCards = [];
+
+      if (teamIRN && teamNZL) {
+        teamIRN.played += 1; teamNZL.played += 1;
+        teamIRN.drawn  += 1; teamNZL.drawn  += 1;
+        teamIRN.points += 1; teamNZL.points += 1;
+        teamIRN.goalsFor      += 2; teamIRN.goalsAgainst += 2;
+        teamNZL.goalsFor      += 2; teamNZL.goalsAgainst += 2;
+        teamIRN.goalDifference = teamIRN.goalsFor - teamIRN.goalsAgainst;
+        teamNZL.goalDifference = teamNZL.goalsFor - teamNZL.goalsAgainst;
+      }
+
+      if (this.playerStats["nzl_elijahjust"])       this.playerStats["nzl_elijahjust"].goals       += 2;
+      if (this.playerStats["nzl_chriswood"])        this.playerStats["nzl_chriswood"].assists      += 2;
+      if (this.playerStats["irn_raminrezaeian"])    this.playerStats["irn_raminrezaeian"].goals    += 1;
+      if (this.playerStats["irn_raminrezaeian"])    this.playerStats["irn_raminrezaeian"].assists  += 1;
+      if (this.playerStats["irn_mohammadmohebbi"])  this.playerStats["irn_mohammadmohebbi"].goals  += 1;
+
+      ["IRN", "NZL"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ==========================================
+    // GRUPO H
+    // ==========================================
+
+    // ── Partido H_1: España 0 – 0 Cabo Verde ───────────────────────────────
+    // Goles: ninguno
+    const matchH1 = this.groupMatches.find(m => m.id === "H_1");
+    if (matchH1) {
+      const teamESP = grpH.find(t => t.id === "ESP");
+      const teamCPV = grpH.find(t => t.id === "CPV");
+
+      matchH1.played = true;
+      matchH1.fixed  = true;
+      matchH1.score  = { home: 0, away: 0 };
+      matchH1.events = [];
+      matchH1.redCards = [];
+
+      if (teamESP && teamCPV) {
+        teamESP.played += 1; teamCPV.played += 1;
+        teamESP.drawn  += 1; teamCPV.drawn  += 1;
+        teamESP.points += 1; teamCPV.points += 1;
+        teamESP.goalsFor      += 0; teamESP.goalsAgainst += 0;
+        teamCPV.goalsFor      += 0; teamCPV.goalsAgainst += 0;
+        teamESP.goalDifference = teamESP.goalsFor - teamESP.goalsAgainst;
+        teamCPV.goalDifference = teamCPV.goalsFor - teamCPV.goalsAgainst;
+      }
+
+      ["ESP", "CPV"].forEach(id => {
+        this.findTeam(id)?.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
+        });
+      });
+    }
+
+    // ── Partido H_2: Arabia Saudita 1 – 1 Uruguay ──────────────────────────
+    // Goles: Abdulelah Alamri (KSA 41', sin asist.), Maxi Araujo (URU 80', sin asist.)
+    const matchH2 = this.groupMatches.find(m => m.id === "H_2");
+    if (matchH2) {
+      const teamKSA = grpH.find(t => t.id === "KSA");
+      const teamURU = grpH.find(t => t.id === "URU");
+
+      matchH2.played = true;
+      matchH2.fixed  = true;
+      matchH2.score  = { home: 1, away: 1 };
+      matchH2.events = [
+        { minute: 41, team: "home", scorer: "Abdulelah Alamri", assister: null },
+        { minute: 80, team: "away", scorer: "Maxi Araujo",      assister: null }
+      ];
+      matchH2.redCards = [];
+
+      if (teamKSA && teamURU) {
+        teamKSA.played += 1; teamURU.played += 1;
+        teamKSA.drawn  += 1; teamURU.drawn  += 1;
+        teamKSA.points += 1; teamURU.points += 1;
+        teamKSA.goalsFor      += 1; teamKSA.goalsAgainst += 1;
+        teamURU.goalsFor      += 1; teamURU.goalsAgainst += 1;
+        teamKSA.goalDifference = teamKSA.goalsFor - teamKSA.goalsAgainst;
+        teamURU.goalDifference = teamURU.goalsFor - teamURU.goalsAgainst;
+      }
+
+      if (this.playerStats["ksa_abdulelahalamri"])  this.playerStats["ksa_abdulelahalamri"].goals += 1;
+      if (this.playerStats["uru_maxiaraujo"])       this.playerStats["uru_maxiaraujo"].goals       += 1;
+
+      ["KSA", "URU"].forEach(id => {
         this.findTeam(id)?.squad.forEach(p => {
           if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
         });
