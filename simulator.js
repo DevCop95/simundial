@@ -168,675 +168,255 @@ export class WorldCupSimulator {
 
   // Pre-load real results so they are never overridden by simulation
   _applyFixedGroupResults() {
-    const grpA = this.groups["A"];
-    const grpB = this.groups["B"];
-    const grpC = this.groups["C"];
-    const grpD = this.groups["D"];
-    const grpE = this.groups["E"];
-    const grpF = this.groups["F"];
-    const grpG = this.groups["G"];
-    const grpH = this.groups["H"];
-
-    // ── Partido A_1: México 2 – 0 Sudáfrica ─────────────────────────────────
-    // Goles: Julian Quinones (9', sin asist.), Raul Jimenez (67', asist. Roberto Alvarado)
-    // Rojas: Sphephelo Sithole (RSA 49'), Themba Zwane (RSA 84'), Cesar Montes (MEX 90+4')
-    const matchA1 = this.groupMatches.find(m => m.id === "A_1");
-    if (matchA1) {
-      const teamMEX = grpA.find(t => t.id === "MEX");
-      const teamRSA = grpA.find(t => t.id === "RSA");
-
-      matchA1.played = true;
-      matchA1.fixed  = true;
-      matchA1.score  = { home: 2, away: 0 };
-      matchA1.events = [
-        { minute: 9,  team: "home", scorer: "Julian Quinones", assister: null },
-        { minute: 67, team: "home", scorer: "Raul Jimenez",    assister: "Roberto Alvarado" }
-      ];
-      matchA1.redCards = [
-        { minute: 49, team: "away", player: "Sphephelo Sithole" },
-        { minute: 84, team: "away", player: "Themba Zwane"      },
-        { minute: 94, team: "home", player: "Cesar Montes"      }
-      ];
-
-      if (teamMEX && teamRSA) {
-        teamMEX.played += 1; teamRSA.played += 1;
-        teamMEX.won    += 1; teamRSA.lost   += 1;
-        teamMEX.points += 3;
-        teamMEX.goalsFor      += 2; teamMEX.goalsAgainst += 0;
-        teamRSA.goalsFor      += 0; teamRSA.goalsAgainst += 2;
-        teamMEX.goalDifference = teamMEX.goalsFor - teamMEX.goalsAgainst;
-        teamRSA.goalDifference = teamRSA.goalsFor - teamRSA.goalsAgainst;
-      }
-
-      if (this.playerStats["mex_julianquinones"])  this.playerStats["mex_julianquinones"].goals   += 1;
-      if (this.playerStats["mex_rauljimenez"])     this.playerStats["mex_rauljimenez"].goals       += 1;
-      if (this.playerStats["mex_robertoalvarado"]) this.playerStats["mex_robertoalvarado"].assists += 1;
-      ["MEX", "RSA"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-
-      // ── Suspensiones por tarjeta roja ─────────────────────────────────────
-      // Cesar Montes (MEX) – roja 90+4': no puede jugar el siguiente partido de MEX
-      const montes = this.findTeam("MEX")?.squad.find(p => p.id === "mex_cesarmontes");
-      if (montes) montes.suspended = true;
-      // Sphephelo Sithole (RSA) – roja 49': no puede jugar el siguiente partido de RSA
-      const sithole = this.findTeam("RSA")?.squad.find(p => p.id === "rsa_sphephelosithole");
-      if (sithole) sithole.suspended = true;
-      // Themba Zwane (RSA) – roja 84': no puede jugar el siguiente partido de RSA
-      const zwane = this.findTeam("RSA")?.squad.find(p => p.id === "rsa_thembazwane");
-      if (zwane) zwane.suspended = true;
-    }
-
-    // ── Partido A_2: Corea del Sur 2 – 1 Rep. Checa ──────────────────────────
-    // Goles: Ladislav Krejci (CZE 59', asist. Vladimir Coufal),
-    //         Hwang Inbeom (KOR 67', sin asist.), Oh Hyeongyu (KOR 80', asist. Hwang Inbeom)
-    // Rojas: ninguna
-    const matchA2 = this.groupMatches.find(m => m.id === "A_2");
-    if (matchA2) {
-      const teamKOR = grpA.find(t => t.id === "KOR");
-      const teamCZE = grpA.find(t => t.id === "CZE");
-
-      matchA2.played = true;
-      matchA2.fixed  = true;
-      matchA2.score  = { home: 2, away: 1 };
-      matchA2.events = [
-        { minute: 59, team: "away", scorer: "Ladislav Krejci", assister: "Vladimir Coufal" },
-        { minute: 67, team: "home", scorer: "Hwang Inbeom",    assister: null },
-        { minute: 80, team: "home", scorer: "Oh Hyeongyu",     assister: "Hwang Inbeom" }
-      ];
-      matchA2.redCards = [];
-
-      if (teamKOR && teamCZE) {
-        teamKOR.played += 1; teamCZE.played += 1;
-        teamKOR.won    += 1; teamCZE.lost   += 1;
-        teamKOR.points += 3;
-        teamKOR.goalsFor      += 2; teamKOR.goalsAgainst += 1;
-        teamCZE.goalsFor      += 1; teamCZE.goalsAgainst += 2;
-        teamKOR.goalDifference = teamKOR.goalsFor - teamKOR.goalsAgainst;
-        teamCZE.goalDifference = teamCZE.goalsFor - teamCZE.goalsAgainst;
-      }
-
-      if (this.playerStats["cze_ladislavkrejci"])  this.playerStats["cze_ladislavkrejci"].goals   += 1;
-      if (this.playerStats["kor_hwanginbeom"])      this.playerStats["kor_hwanginbeom"].goals       += 1;
-      if (this.playerStats["kor_ohhyeongyu"])       this.playerStats["kor_ohhyeongyu"].goals        += 1;
-      if (this.playerStats["cze_vladimircoufal"])   this.playerStats["cze_vladimircoufal"].assists  += 1;
-      if (this.playerStats["kor_hwanginbeom"])      this.playerStats["kor_hwanginbeom"].assists     += 1;
-      ["KOR", "CZE"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido B_1: Canadá 1 – 1 Bosnia-Herz. ───────────────────────────
-    // Goles: Jovo Lukic (BIH 21', asist. Sead Kolasinac), Cyle Larin (CAN 78', asist. Promise David)
-    const matchB1 = this.groupMatches.find(m => m.id === "B_1");
-    if (matchB1) {
-      const teamCAN = grpB.find(t => t.id === "CAN");
-      const teamBIH = grpB.find(t => t.id === "BIH");
-
-      matchB1.played = true;
-      matchB1.fixed  = true;
-      matchB1.score  = { home: 1, away: 1 };
-      matchB1.events = [
-        { minute: 21, team: "away", scorer: "Jovo Lukic",     assister: "Sead Kolasinac" },
-        { minute: 78, team: "home", scorer: "Cyle Larin",     assister: "Promise David" }
-      ];
-      matchB1.redCards = [];
-
-      if (teamCAN && teamBIH) {
-        teamCAN.played += 1; teamBIH.played += 1;
-        teamCAN.drawn  += 1; teamBIH.drawn  += 1;
-        teamCAN.points += 1; teamBIH.points += 1;
-        teamCAN.goalsFor      += 1; teamCAN.goalsAgainst += 1;
-        teamBIH.goalsFor      += 1; teamBIH.goalsAgainst += 1;
-        teamCAN.goalDifference = teamCAN.goalsFor - teamCAN.goalsAgainst;
-        teamBIH.goalDifference = teamBIH.goalsFor - teamBIH.goalsAgainst;
-      }
-
-      if (this.playerStats["can_cylelarin"])      this.playerStats["can_cylelarin"].goals     += 1;
-      if (this.playerStats["can_promisedavid"])   this.playerStats["can_promisedavid"].assists += 1;
-      if (this.playerStats["bih_jovolukic"])      this.playerStats["bih_jovolukic"].goals     += 1;
-      if (this.playerStats["bih_seadkolasinac"])  this.playerStats["bih_seadkolasinac"].assists += 1;
-      ["CAN", "BIH"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido B_2: Catar 1 – 1 Suiza ────────────────────────────────────
-    // Goles: Breel Embolo (SUI 17' pen, sin asist.), Boualem Khoukhi (QAT 94', asist. Homam Ahmed)
-    const matchB2 = this.groupMatches.find(m => m.id === "B_2");
-    if (matchB2) {
-      const teamQAT = grpB.find(t => t.id === "QAT");
-      const teamSUI = grpB.find(t => t.id === "SUI");
-
-      matchB2.played = true;
-      matchB2.fixed  = true;
-      matchB2.score  = { home: 1, away: 1 };
-      matchB2.events = [
-        { minute: 17, team: "away", scorer: "Breel Embolo",     assister: null },
-        { minute: 94, team: "home", scorer: "Boualem Khoukhi",  assister: "Homam Ahmed" }
-      ];
-      matchB2.redCards = [];
-
-      if (teamQAT && teamSUI) {
-        teamQAT.played += 1; teamSUI.played += 1;
-        teamQAT.drawn  += 1; teamSUI.drawn  += 1;
-        teamQAT.points += 1; teamSUI.points += 1;
-        teamQAT.goalsFor      += 1; teamQAT.goalsAgainst += 1;
-        teamSUI.goalsFor      += 1; teamSUI.goalsAgainst += 1;
-        teamQAT.goalDifference = teamQAT.goalsFor - teamQAT.goalsAgainst;
-        teamSUI.goalDifference = teamSUI.goalsFor - teamSUI.goalsAgainst;
-      }
-
-      if (this.playerStats["sui_breelembolo"])      this.playerStats["sui_breelembolo"].goals     += 1;
-      if (this.playerStats["qat_boualemkhoukhi"])   this.playerStats["qat_boualemkhoukhi"].goals  += 1;
-      if (this.playerStats["qat_homamahmed"])       this.playerStats["qat_homamahmed"].assists     += 1;
-      ["QAT", "SUI"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO C
-    // ==========================================
-
-    // ── Partido C_1: Brasil 1 – 1 Marruecos ───────────────────────────────
-    // Goles: Ismael Saibari (MAR 21', asist. Brahim Diaz), Vinicius Junior (BRA 32', asist. Bruno Guimaraes)
-    const matchC1 = this.groupMatches.find(m => m.id === "C_1");
-    if (matchC1) {
-      const teamBRA = grpC.find(t => t.id === "BRA");
-      const teamMAR = grpC.find(t => t.id === "MAR");
-
-      matchC1.played = true;
-      matchC1.fixed  = true;
-      matchC1.score  = { home: 1, away: 1 };
-      matchC1.events = [
-        { minute: 21, team: "away", scorer: "Ismael Saibari",     assister: "Brahim Diaz" },
-        { minute: 32, team: "home", scorer: "Vinicius Junior",    assister: "Bruno Guimaraes" }
-      ];
-      matchC1.redCards = [];
-
-      if (teamBRA && teamMAR) {
-        teamBRA.played += 1; teamMAR.played += 1;
-        teamBRA.drawn  += 1; teamMAR.drawn  += 1;
-        teamBRA.points += 1; teamMAR.points += 1;
-        teamBRA.goalsFor      += 1; teamBRA.goalsAgainst += 1;
-        teamMAR.goalsFor      += 1; teamMAR.goalsAgainst += 1;
-        teamBRA.goalDifference = teamBRA.goalsFor - teamBRA.goalsAgainst;
-        teamMAR.goalDifference = teamMAR.goalsFor - teamMAR.goalsAgainst;
-      }
-
-      if (this.playerStats["bra_viniciusjunior"])   this.playerStats["bra_viniciusjunior"].goals   += 1;
-      if (this.playerStats["bra_brunoguimaraes"])   this.playerStats["bra_brunoguimaraes"].assists += 1;
-      if (this.playerStats["mar_ismaelsaibari"])    this.playerStats["mar_ismaelsaibari"].goals    += 1;
-      if (this.playerStats["mar_brahimdiaz"])       this.playerStats["mar_brahimdiaz"].assists     += 1;
-      ["BRA", "MAR"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido C_2: Haití 0 – 1 Escocia ──────────────────────────────────
-    // Goles: John McGinn (SCO 29', sin asist.)
-    const matchC2 = this.groupMatches.find(m => m.id === "C_2");
-    if (matchC2) {
-      const teamHAI = grpC.find(t => t.id === "HAI");
-      const teamSCO = grpC.find(t => t.id === "SCO");
-
-      matchC2.played = true;
-      matchC2.fixed  = true;
-      matchC2.score  = { home: 0, away: 1 };
-      matchC2.events = [
-        { minute: 29, team: "away", scorer: "John McGinn",     assister: null }
-      ];
-      matchC2.redCards = [];
-
-      if (teamHAI && teamSCO) {
-        teamHAI.played += 1; teamSCO.played += 1;
-        teamSCO.won    += 1; teamHAI.lost   += 1;
-        teamSCO.points += 3;
-        teamHAI.goalsFor      += 0; teamHAI.goalsAgainst += 1;
-        teamSCO.goalsFor      += 1; teamSCO.goalsAgainst += 0;
-        teamHAI.goalDifference = teamHAI.goalsFor - teamHAI.goalsAgainst;
-        teamSCO.goalDifference = teamSCO.goalsFor - teamSCO.goalsAgainst;
-      }
-
-      if (this.playerStats["sco_johnmcginn"])       this.playerStats["sco_johnmcginn"].goals       += 1;
-      ["HAI", "SCO"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO D
-    // ==========================================
-
-    // ── Partido D_1: Estados Unidos 4 – 1 Paraguay ────────────────────────
-    // Goles: Damian Bobadilla (PRY 7' OG), Folarin Balogun (USA 31', asist. Christian Pulisic), Folarin Balogun (USA 45', asist. Malik Tillman), Mauricio (PRY 73', asist. Julio Enciso), Giovanni Reyna (USA 90', asist. Alex Freeman)
-    const matchD1 = this.groupMatches.find(m => m.id === "D_1");
-    if (matchD1) {
-      const teamUSA = grpD.find(t => t.id === "USA");
-      const teamPRY = grpD.find(t => t.id === "PRY");
-
-      matchD1.played = true;
-      matchD1.fixed  = true;
-      matchD1.score  = { home: 4, away: 1 };
-      matchD1.events = [
-        { minute: 7,  team: "home", scorer: "Damian Bobadilla (Autogol)", assister: null },
-        { minute: 31, team: "home", scorer: "Folarin Balogun",            assister: "Christian Pulisic" },
-        { minute: 45, team: "home", scorer: "Folarin Balogun",            assister: "Malik Tillman" },
-        { minute: 73, team: "away", scorer: "Mauricio",                   assister: "Julio Enciso" },
-        { minute: 90, team: "home", scorer: "Giovanni Reyna",             assister: "Alex Freeman" }
-      ];
-      matchD1.redCards = [];
-
-      if (teamUSA && teamPRY) {
-        teamUSA.played += 1; teamPRY.played += 1;
-        teamUSA.won    += 1; teamPRY.lost   += 1;
-        teamUSA.points += 3;
-        teamUSA.goalsFor      += 4; teamUSA.goalsAgainst += 1;
-        teamPRY.goalsFor      += 1; teamPRY.goalsAgainst += 4;
-        teamUSA.goalDifference = teamUSA.goalsFor - teamUSA.goalsAgainst;
-        teamPRY.goalDifference = teamPRY.goalsFor - teamPRY.goalsAgainst;
-      }
-
-      if (this.playerStats["usa_folarinbalogun"])    this.playerStats["usa_folarinbalogun"].goals    += 2;
-      if (this.playerStats["usa_giovannireyna"])    this.playerStats["usa_giovannireyna"].goals     += 1;
-      if (this.playerStats["usa_christianpulisic"])  this.playerStats["usa_christianpulisic"].assists += 1;
-      if (this.playerStats["usa_maliktillman"])      this.playerStats["usa_maliktillman"].assists     += 1;
-      if (this.playerStats["usa_alexfreeman"])      this.playerStats["usa_alexfreeman"].assists     += 1;
-      if (this.playerStats["pry_mauricio"])          this.playerStats["pry_mauricio"].goals          += 1;
-      if (this.playerStats["pry_julioenciso"])      this.playerStats["pry_julioenciso"].assists     += 1;
-      ["USA", "PRY"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido D_2: Australia 2 – 0 Turquía ──────────────────────────────
-    // Goles: Nestory Irankunda (AUS 27', asist. Paul Okon-engstler), Connor Metcalfe (AUS 75', sin asist.)
-    const matchD2 = this.groupMatches.find(m => m.id === "D_2");
-    if (matchD2) {
-      const teamAUS = grpD.find(t => t.id === "AUS");
-      const teamTUR = grpD.find(t => t.id === "TUR");
-
-      matchD2.played = true;
-      matchD2.fixed  = true;
-      matchD2.score  = { home: 2, away: 0 };
-      matchD2.events = [
-        { minute: 27, team: "home", scorer: "Nestory Irankunda",   assister: "Paul Okon-engstler" },
-        { minute: 75, team: "home", scorer: "Connor Metcalfe",     assister: null }
-      ];
-      matchD2.redCards = [];
-
-      if (teamAUS && teamTUR) {
-        teamAUS.played += 1; teamTUR.played += 1;
-        teamAUS.won    += 1; teamTUR.lost   += 1;
-        teamAUS.points += 3;
-        teamAUS.goalsFor      += 2; teamAUS.goalsAgainst += 0;
-        teamTUR.goalsFor      += 0; teamTUR.goalsAgainst += 2;
-        teamAUS.goalDifference = teamAUS.goalsFor - teamAUS.goalsAgainst;
-        teamTUR.goalDifference = teamTUR.goalsFor - teamTUR.goalsAgainst;
-      }
-
-      if (this.playerStats["aus_nestoryirankunda"])   this.playerStats["aus_nestoryirankunda"].goals   += 1;
-      if (this.playerStats["aus_paulokonengstler"])   this.playerStats["aus_paulokonengstler"].assists += 1;
-      if (this.playerStats["aus_connormetcalfe"])     this.playerStats["aus_connormetcalfe"].goals     += 1;
-      ["AUS", "TUR"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO E
-    // ==========================================
-
-    // ── Partido E_1: Alemania 7 – 1 Curaçao ────────────────────────────────
-    // Goles: Felix Nmecha (GER 6', asist. Florian Wirtz), Livano Comenencia (CUW 21'),
-    //        Nico Schlotterbeck (GER 38'), Kai Havertz (GER 45+5' pen, GER 88'),
-    //        Jamal Musiala (GER 47'), Nathaniel Brown (GER 68'), Deniz Undav (GER 78', asist. Joshua Kimmich)
-    const matchE1 = this.groupMatches.find(m => m.id === "E_1");
-    if (matchE1) {
-      const teamGER = grpE.find(t => t.id === "GER");
-      const teamCUW = grpE.find(t => t.id === "CUW");
-
-      matchE1.played = true;
-      matchE1.fixed  = true;
-      matchE1.score  = { home: 7, away: 1 };
-      matchE1.events = [
-        { minute: 6,   team: "home", scorer: "Felix Nmecha",        assister: "Florian Wirtz" },
-        { minute: 21,  team: "away", scorer: "Livano Comenencia",   assister: null },
-        { minute: 38,  team: "home", scorer: "Nico Schlotterbeck",  assister: null },
-        { minute: 45,  team: "home", scorer: "Kai Havertz",         assister: null },
-        { minute: 47,  team: "home", scorer: "Jamal Musiala",       assister: null },
-        { minute: 68,  team: "home", scorer: "Nathaniel Brown",     assister: null },
-        { minute: 78,  team: "home", scorer: "Deniz Undav",         assister: "Joshua Kimmich" },
-        { minute: 88,  team: "home", scorer: "Kai Havertz",         assister: null }
-      ];
-      matchE1.redCards = [];
-
-      if (teamGER && teamCUW) {
-        teamGER.played += 1; teamCUW.played += 1;
-        teamGER.won    += 1; teamCUW.lost   += 1;
-        teamGER.points += 3;
-        teamGER.goalsFor      += 7; teamGER.goalsAgainst += 1;
-        teamCUW.goalsFor      += 1; teamCUW.goalsAgainst += 7;
-        teamGER.goalDifference = teamGER.goalsFor - teamGER.goalsAgainst;
-        teamCUW.goalDifference = teamCUW.goalsFor - teamCUW.goalsAgainst;
-      }
-
-      if (this.playerStats["ger_felixnmecha"])        this.playerStats["ger_felixnmecha"].goals        += 1;
-      if (this.playerStats["ger_nicoschlotterbeck"])  this.playerStats["ger_nicoschlotterbeck"].goals  += 1;
-      if (this.playerStats["ger_kaihavertz"])         this.playerStats["ger_kaihavertz"].goals         += 2;
-      if (this.playerStats["ger_jamalmusiala"])       this.playerStats["ger_jamalmusiala"].goals       += 1;
-      if (this.playerStats["ger_nathanielbrown"])     this.playerStats["ger_nathanielbrown"].goals     += 1;
-      if (this.playerStats["ger_denizundav"])         this.playerStats["ger_denizundav"].goals         += 1;
-      if (this.playerStats["ger_florianwirtz"])       this.playerStats["ger_florianwirtz"].assists     += 1;
-      if (this.playerStats["ger_joshuakimmich"])      this.playerStats["ger_joshuakimmich"].assists    += 1;
-      if (this.playerStats["cuw_livanocomenencia"])   this.playerStats["cuw_livanocomenencia"].goals   += 1;
-
-      ["GER", "CUW"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido E_2: Costa de Marfil 1 – 0 Ecuador ─────────────────────────
-    // Goles: Amad Diallo (CIV 90', asist. Wilfried Singo)
-    const matchE2 = this.groupMatches.find(m => m.id === "E_2");
-    if (matchE2) {
-      const teamCIV = grpE.find(t => t.id === "CIV");
-      const teamECU = grpE.find(t => t.id === "ECU");
-
-      matchE2.played = true;
-      matchE2.fixed  = true;
-      matchE2.score  = { home: 1, away: 0 };
-      matchE2.events = [
-        { minute: 90, team: "home", scorer: "Amad Diallo", assister: "Wilfried Singo" }
-      ];
-      matchE2.redCards = [];
-
-      if (teamCIV && teamECU) {
-        teamCIV.played += 1; teamECU.played += 1;
-        teamCIV.won    += 1; teamECU.lost   += 1;
-        teamCIV.points += 3;
-        teamCIV.goalsFor      += 1; teamCIV.goalsAgainst += 0;
-        teamECU.goalsFor      += 0; teamECU.goalsAgainst += 1;
-        teamCIV.goalDifference = teamCIV.goalsFor - teamCIV.goalsAgainst;
-        teamECU.goalDifference = teamECU.goalsFor - teamECU.goalsAgainst;
-      }
-
-      if (this.playerStats["civ_amaddiallo"])    this.playerStats["civ_amaddiallo"].goals    += 1;
-      if (this.playerStats["civ_wilfriedsingo"])  this.playerStats["civ_wilfriedsingo"].assists += 1;
-
-      ["CIV", "ECU"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO F
-    // ==========================================
-
-    // ── Partido F_1: Países Bajos 2 – 2 Japón ──────────────────────────────
-    // Goles: Virgil Van Dijk (NED 51', asist. Ryan Gravenberch), Keito Nakamura (JPN 57', sin asist.),
-    //        Crysencio Summerville (NED 64', sin asist.), Daichi Kamada (JPN 89', asist. Kento Shiogai)
-    const matchF1 = this.groupMatches.find(m => m.id === "F_1");
-    if (matchF1) {
-      const teamNED = grpF.find(t => t.id === "NED");
-      const teamJPN = grpF.find(t => t.id === "JPN");
-
-      matchF1.played = true;
-      matchF1.fixed  = true;
-      matchF1.score  = { home: 2, away: 2 };
-      matchF1.events = [
-        { minute: 51, team: "home", scorer: "Virgil Van Dijk", assister: "Ryan Gravenberch" },
-        { minute: 57, team: "away", scorer: "Keito Nakamura",   assister: null },
-        { minute: 64, team: "home", scorer: "Crysencio Summerville", assister: null },
-        { minute: 89, team: "away", scorer: "Daichi Kamada",    assister: "Kento Shiogai" }
-      ];
-      matchF1.redCards = [];
-
-      if (teamNED && teamJPN) {
-        teamNED.played += 1; teamJPN.played += 1;
-        teamNED.drawn  += 1; teamJPN.drawn  += 1;
-        teamNED.points += 1; teamJPN.points += 1;
-        teamNED.goalsFor      += 2; teamNED.goalsAgainst += 2;
-        teamJPN.goalsFor      += 2; teamJPN.goalsAgainst += 2;
-        teamNED.goalDifference = teamNED.goalsFor - teamNED.goalsAgainst;
-        teamJPN.goalDifference = teamJPN.goalsFor - teamJPN.goalsAgainst;
-      }
-
-      if (this.playerStats["ned_virgilvandijk"])         this.playerStats["ned_virgilvandijk"].goals         += 1;
-      if (this.playerStats["ned_ryangravenberch"])       this.playerStats["ned_ryangravenberch"].assists     += 1;
-      if (this.playerStats["jpn_keitonakamura"])         this.playerStats["jpn_keitonakamura"].goals         += 1;
-      if (this.playerStats["ned_crysenciosummerville"])  this.playerStats["ned_crysenciosummerville"].goals  += 1;
-      if (this.playerStats["jpn_daichikamada"])           this.playerStats["jpn_daichikamada"].goals           += 1;
-      if (this.playerStats["jpn_kentoshiogai"])          this.playerStats["jpn_kentoshiogai"].assists        += 1;
-
-      ["NED", "JPN"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido F_2: Suecia 5 – 1 Túnez ────────────────────────────────────
-    // Goles: Yasin Ayari (SWE 7', asist. Viktor Gyokeres), Yasin Ayari (SWE 90+6', asist. Lucas Bergvall),
-    //        Alexander Isak (SWE 30', sin asist.), Viktor Gyokeres (SWE 59', asist. Alexander Isak),
-    //        Mattias Svanberg (SWE 84', asist. Alexander Isak), Omar Rekik (TUN 43', asist. Hannibal Mejbri)
-    const matchF2 = this.groupMatches.find(m => m.id === "F_2");
-    if (matchF2) {
-      const teamSWE = grpF.find(t => t.id === "SWE");
-      const teamTUN = grpF.find(t => t.id === "TUN");
-
-      matchF2.played = true;
-      matchF2.fixed  = true;
-      matchF2.score  = { home: 5, away: 1 };
-      matchF2.events = [
-        { minute: 7,  team: "home", scorer: "Yasin Ayari",       assister: "Viktor Gyokeres" },
-        { minute: 30, team: "home", scorer: "Alexander Isak",    assister: null },
-        { minute: 43, team: "away", scorer: "Omar Rekik",        assister: "Hannibal Mejbri" },
-        { minute: 59, team: "home", scorer: "Viktor Gyokeres",   assister: "Alexander Isak" },
-        { minute: 84, team: "home", scorer: "Mattias Svanberg",  assister: "Alexander Isak" },
-        { minute: 96, team: "home", scorer: "Yasin Ayari",       assister: "Lucas Bergvall" }
-      ];
-      matchF2.redCards = [];
-
-      if (teamSWE && teamTUN) {
-        teamSWE.played += 1; teamTUN.played += 1;
-        teamSWE.won    += 1; teamTUN.lost   += 1;
-        teamSWE.points += 3;
-        teamSWE.goalsFor      += 5; teamSWE.goalsAgainst += 1;
-        teamTUN.goalsFor      += 1; teamTUN.goalsAgainst += 5;
-        teamSWE.goalDifference = teamSWE.goalsFor - teamSWE.goalsAgainst;
-        teamTUN.goalDifference = teamTUN.goalsFor - teamTUN.goalsAgainst;
-      }
-
-      if (this.playerStats["swe_yasinayari"])        this.playerStats["swe_yasinayari"].goals        += 2;
-      if (this.playerStats["swe_alexanderisak"])     this.playerStats["swe_alexanderisak"].goals     += 1;
-      if (this.playerStats["swe_alexanderisak"])     this.playerStats["swe_alexanderisak"].assists   += 2;
-      if (this.playerStats["swe_viktorgyokeres"])    this.playerStats["swe_viktorgyokeres"].goals    += 1;
-      if (this.playerStats["swe_viktorgyokeres"])    this.playerStats["swe_viktorgyokeres"].assists  += 1;
-      if (this.playerStats["swe_mattiassvanberg"])   this.playerStats["swe_mattiassvanberg"].goals   += 1;
-      if (this.playerStats["swe_lucasbergvall"])     this.playerStats["swe_lucasbergvall"].assists   += 1;
-      if (this.playerStats["tun_omarrekik"])         this.playerStats["tun_omarrekik"].goals         += 1;
-      if (this.playerStats["tun_hannibalmejbri"])    this.playerStats["tun_hannibalmejbri"].assists  += 1;
-
-      ["SWE", "TUN"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO G
-    // ==========================================
-
-    // ── Partido G_1: Bélgica 1 – 1 Egipto ──────────────────────────────────
-    // Goles: Emam Ashour (EGY 19', asist. Mohamed Salah), Mohamed Hany (EGY 66' OG, sin asist.)
-    const matchG1 = this.groupMatches.find(m => m.id === "G_1");
-    if (matchG1) {
-      const teamBEL = grpG.find(t => t.id === "BEL");
-      const teamEGY = grpG.find(t => t.id === "EGY");
-
-      matchG1.played = true;
-      matchG1.fixed  = true;
-      matchG1.score  = { home: 1, away: 1 };
-      matchG1.events = [
-        { minute: 19, team: "away", scorer: "Emam Ashour",           assister: "Mohamed Salah" },
-        { minute: 66, team: "home", scorer: "Mohamed Hany (Autogol)", assister: null }
-      ];
-      matchG1.redCards = [];
-
-      if (teamBEL && teamEGY) {
-        teamBEL.played += 1; teamEGY.played += 1;
-        teamBEL.drawn  += 1; teamEGY.drawn  += 1;
-        teamBEL.points += 1; teamEGY.points += 1;
-        teamBEL.goalsFor      += 1; teamBEL.goalsAgainst += 1;
-        teamEGY.goalsFor      += 1; teamEGY.goalsAgainst += 1;
-        teamBEL.goalDifference = teamBEL.goalsFor - teamBEL.goalsAgainst;
-        teamEGY.goalDifference = teamEGY.goalsFor - teamEGY.goalsAgainst;
-      }
-
-      if (this.playerStats["egy_emamashour"])     this.playerStats["egy_emamashour"].goals    += 1;
-      if (this.playerStats["egy_mohamedsalah"])   this.playerStats["egy_mohamedsalah"].assists += 1;
-
-      ["BEL", "EGY"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido G_2: Irán 2 – 2 Nueva Zelanda ──────────────────────────────
-    // Goles: Elijah Just (NZL 7', asist. Chris Wood), Ramin Rezaeian (IRN 32', sin asist.),
-    //        Elijah Just (NZL 54', asist. Chris Wood), Mohammad Mohebbi (IRN 64', asist. Ramin Rezaeian)
-    const matchG2 = this.groupMatches.find(m => m.id === "G_2");
-    if (matchG2) {
-      const teamIRN = grpG.find(t => t.id === "IRN");
-      const teamNZL = grpG.find(t => t.id === "NZL");
-
-      matchG2.played = true;
-      matchG2.fixed  = true;
-      matchG2.score  = { home: 2, away: 2 };
-      matchG2.events = [
-        { minute: 7,  team: "away", scorer: "Elijah Just",     assister: "Chris Wood" },
-        { minute: 32, team: "home", scorer: "Ramin Rezaeian",  assister: null },
-        { minute: 54, team: "away", scorer: "Elijah Just",     assister: "Chris Wood" },
-        { minute: 64, team: "home", scorer: "Mohammad Mohebbi", assister: "Ramin Rezaeian" }
-      ];
-      matchG2.redCards = [];
-
-      if (teamIRN && teamNZL) {
-        teamIRN.played += 1; teamNZL.played += 1;
-        teamIRN.drawn  += 1; teamNZL.drawn  += 1;
-        teamIRN.points += 1; teamNZL.points += 1;
-        teamIRN.goalsFor      += 2; teamIRN.goalsAgainst += 2;
-        teamNZL.goalsFor      += 2; teamNZL.goalsAgainst += 2;
-        teamIRN.goalDifference = teamIRN.goalsFor - teamIRN.goalsAgainst;
-        teamNZL.goalDifference = teamNZL.goalsFor - teamNZL.goalsAgainst;
-      }
-
-      if (this.playerStats["nzl_elijahjust"])       this.playerStats["nzl_elijahjust"].goals       += 2;
-      if (this.playerStats["nzl_chriswood"])        this.playerStats["nzl_chriswood"].assists      += 2;
-      if (this.playerStats["irn_raminrezaeian"])    this.playerStats["irn_raminrezaeian"].goals    += 1;
-      if (this.playerStats["irn_raminrezaeian"])    this.playerStats["irn_raminrezaeian"].assists  += 1;
-      if (this.playerStats["irn_mohammadmohebbi"])  this.playerStats["irn_mohammadmohebbi"].goals  += 1;
-
-      ["IRN", "NZL"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ==========================================
-    // GRUPO H
-    // ==========================================
-
-    // ── Partido H_1: España 0 – 0 Cabo Verde ───────────────────────────────
-    // Goles: ninguno
-    const matchH1 = this.groupMatches.find(m => m.id === "H_1");
-    if (matchH1) {
-      const teamESP = grpH.find(t => t.id === "ESP");
-      const teamCPV = grpH.find(t => t.id === "CPV");
-
-      matchH1.played = true;
-      matchH1.fixed  = true;
-      matchH1.score  = { home: 0, away: 0 };
-      matchH1.events = [];
-      matchH1.redCards = [];
-
-      if (teamESP && teamCPV) {
-        teamESP.played += 1; teamCPV.played += 1;
-        teamESP.drawn  += 1; teamCPV.drawn  += 1;
-        teamESP.points += 1; teamCPV.points += 1;
-        teamESP.goalsFor      += 0; teamESP.goalsAgainst += 0;
-        teamCPV.goalsFor      += 0; teamCPV.goalsAgainst += 0;
-        teamESP.goalDifference = teamESP.goalsFor - teamESP.goalsAgainst;
-        teamCPV.goalDifference = teamCPV.goalsFor - teamCPV.goalsAgainst;
-      }
-
-      ["ESP", "CPV"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
-
-    // ── Partido H_2: Arabia Saudita 1 – 1 Uruguay ──────────────────────────
-    // Goles: Abdulelah Alamri (KSA 41', sin asist.), Maxi Araujo (URU 80', sin asist.)
-    const matchH2 = this.groupMatches.find(m => m.id === "H_2");
-    if (matchH2) {
-      const teamKSA = grpH.find(t => t.id === "KSA");
-      const teamURU = grpH.find(t => t.id === "URU");
-
-      matchH2.played = true;
-      matchH2.fixed  = true;
-      matchH2.score  = { home: 1, away: 1 };
-      matchH2.events = [
-        { minute: 41, team: "home", scorer: "Abdulelah Alamri", assister: null },
-        { minute: 80, team: "away", scorer: "Maxi Araujo",      assister: null }
-      ];
-      matchH2.redCards = [];
-
-      if (teamKSA && teamURU) {
-        teamKSA.played += 1; teamURU.played += 1;
-        teamKSA.drawn  += 1; teamURU.drawn  += 1;
-        teamKSA.points += 1; teamURU.points += 1;
-        teamKSA.goalsFor      += 1; teamKSA.goalsAgainst += 1;
-        teamURU.goalsFor      += 1; teamURU.goalsAgainst += 1;
-        teamKSA.goalDifference = teamKSA.goalsFor - teamKSA.goalsAgainst;
-        teamURU.goalDifference = teamURU.goalsFor - teamURU.goalsAgainst;
-      }
-
-      if (this.playerStats["ksa_abdulelahalamri"])  this.playerStats["ksa_abdulelahalamri"].goals += 1;
-      if (this.playerStats["uru_maxiaraujo"])       this.playerStats["uru_maxiaraujo"].goals       += 1;
-
-      ["KSA", "URU"].forEach(id => {
-        this.findTeam(id)?.squad.forEach(p => {
-          if (!p.injured && this.playerStats[p.id]) this.playerStats[p.id].matchesPlayed += 1;
-        });
-      });
-    }
+    // === JORNADA 1 ===
+    // ── Grupo A ──
+    this._applyFixedMatch("A_1", 2, 0, [
+      { minute: 9, team: "home", scorer: "Julian Quinones", scorerId: "mex_julianquinones", assister: null, assisterId: null },
+      { minute: 67, team: "home", scorer: "Raul Jimenez", scorerId: "mex_rauljimenez", assister: "Roberto Alvarado", assisterId: "mex_robertoalvarado" }
+    ], [
+      { minute: 49, team: "away", player: "Sphephelo Sithole", playerId: "rsa_sphephelosithole" },
+      { minute: 84, team: "away", player: "Themba Zwane", playerId: "rsa_thembazwane" },
+      { minute: 94, team: "home", player: "Cesar Montes", playerId: "mex_cesarmontes" }
+    ]);
+
+    this._applyFixedMatch("A_2", 2, 1, [
+      { minute: 59, team: "away", scorer: "Ladislav Krejci", scorerId: "cze_ladislavkrejci", assister: "Vladimir Coufal", assisterId: "cze_vladimircoufal" },
+      { minute: 67, team: "home", scorer: "Hwang Inbeom", scorerId: "kor_hwanginbeom", assister: null, assisterId: null },
+      { minute: 80, team: "home", scorer: "Oh Hyeongyu", scorerId: "kor_ohhyeongyu", assister: "Hwang Inbeom", assisterId: "kor_hwanginbeom" }
+    ]);
+
+    // ── Grupo B ──
+    this._applyFixedMatch("B_1", 1, 1, [
+      { minute: 21, team: "away", scorer: "Jovo Lukic", scorerId: "bih_jovolukic", assister: "Sead Kolasinac", assisterId: "bih_seadkolasinac" },
+      { minute: 78, team: "home", scorer: "Cyle Larin", scorerId: "can_cylelarin", assister: "Promise David", assisterId: "can_promisedavid" }
+    ]);
+
+    this._applyFixedMatch("B_2", 1, 1, [
+      { minute: 17, team: "away", scorer: "Breel Embolo", scorerId: "sui_breelembolo", assister: null, assisterId: null },
+      { minute: 94, team: "home", scorer: "Boualem Khoukhi", scorerId: "qat_boualemkhoukhi", assister: "Homam Ahmed", assisterId: "qat_homamahmed" }
+    ]);
+
+    // ── Grupo C ──
+    this._applyFixedMatch("C_1", 1, 1, [
+      { minute: 21, team: "away", scorer: "Ismael Saibari", scorerId: "mar_ismaelsaibari", assister: "Brahim Diaz", assisterId: "mar_brahimdiaz" },
+      { minute: 32, team: "home", scorer: "Vinicius Junior", scorerId: "bra_viniciusjunior", assister: "Bruno Guimaraes", assisterId: "bra_brunoguimaraes" }
+    ]);
+
+    this._applyFixedMatch("C_2", 0, 1, [
+      { minute: 29, team: "away", scorer: "John McGinn", scorerId: "sco_johnmcginn", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo D ──
+    this._applyFixedMatch("D_1", 4, 1, [
+      { minute: 7, team: "home", scorer: "Damian Bobadilla (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 31, team: "home", scorer: "Folarin Balogun", scorerId: "usa_folarinbalogun", assister: "Christian Pulisic", assisterId: "usa_christianpulisic" },
+      { minute: 45, team: "home", scorer: "Folarin Balogun", scorerId: "usa_folarinbalogun", assister: "Malik Tillman", assisterId: "usa_maliktillman" },
+      { minute: 73, team: "away", scorer: "Mauricio", scorerId: "pry_mauricio", assister: "Julio Enciso", assisterId: "pry_julioenciso" },
+      { minute: 90, team: "home", scorer: "Giovanni Reyna", scorerId: "usa_giovannireyna", assister: "Alex Freeman", assisterId: "usa_alexfreeman" }
+    ]);
+
+    this._applyFixedMatch("D_2", 2, 0, [
+      { minute: 27, team: "home", scorer: "Nestory Irankunda", scorerId: "aus_nestoryirankunda", assister: "Paul Okon-engstler", assisterId: "aus_paulokonengstler" },
+      { minute: 75, team: "home", scorer: "Connor Metcalfe", scorerId: "aus_connormetcalfe", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo E ──
+    this._applyFixedMatch("E_1", 7, 1, [
+      { minute: 6, team: "home", scorer: "Felix Nmecha", scorerId: "ger_felixnmecha", assister: "Florian Wirtz", assisterId: "ger_florianwirtz" },
+      { minute: 21, team: "away", scorer: "Livano Comenencia", scorerId: "cuw_livanocomenencia", assister: null, assisterId: null },
+      { minute: 38, team: "home", scorer: "Nico Schlotterbeck", scorerId: "ger_nicoschlotterbeck", assister: null, assisterId: null },
+      { minute: 45, team: "home", scorer: "Kai Havertz", scorerId: "ger_kaihavertz", assister: null, assisterId: null },
+      { minute: 47, team: "home", scorer: "Jamal Musiala", scorerId: "ger_jamalmusiala", assister: null, assisterId: null },
+      { minute: 68, team: "home", scorer: "Nathaniel Brown", scorerId: "ger_nathanielbrown", assister: null, assisterId: null },
+      { minute: 78, team: "home", scorer: "Deniz Undav", scorerId: "ger_denizundav", assister: "Joshua Kimmich", assisterId: "ger_joshuakimmich" },
+      { minute: 88, team: "home", scorer: "Kai Havertz", scorerId: "ger_kaihavertz", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("E_2", 1, 0, [
+      { minute: 90, team: "home", scorer: "Amad Diallo", scorerId: "civ_amaddiallo", assister: "Wilfried Singo", assisterId: "civ_wilfriedsingo" }
+    ]);
+
+    // ── Grupo F ──
+    this._applyFixedMatch("F_1", 2, 2, [
+      { minute: 51, team: "home", scorer: "Virgil Van Dijk", scorerId: "ned_virgilvandijk", assister: "Ryan Gravenberch", assisterId: "ned_ryangravenberch" },
+      { minute: 57, team: "away", scorer: "Keito Nakamura", scorerId: "jpn_keitonakamura", assister: null, assisterId: null },
+      { minute: 64, team: "home", scorer: "Crysencio Summerville", scorerId: "ned_crysenciosummerville", assister: null, assisterId: null },
+      { minute: 89, team: "away", scorer: "Daichi Kamada", scorerId: "jpn_daichikamada", assister: "Kento Shiogai", assisterId: "jpn_kentoshiogai" }
+    ]);
+
+    this._applyFixedMatch("F_2", 5, 1, [
+      { minute: 7, team: "home", scorer: "Yasin Ayari", scorerId: "swe_yasinayari", assister: "Viktor Gyokeres", assisterId: "swe_viktorgyokeres" },
+      { minute: 30, team: "home", scorer: "Alexander Isak", scorerId: "swe_alexanderisak", assister: null, assisterId: null },
+      { minute: 43, team: "away", scorer: "Omar Rekik", scorerId: "tun_omarrekik", assister: "Hannibal Mejbri", assisterId: "tun_hannibalmejbri" },
+      { minute: 59, team: "home", scorer: "Viktor Gyokeres", scorerId: "swe_viktorgyokeres", assister: "Alexander Isak", assisterId: "swe_alexanderisak" },
+      { minute: 84, team: "home", scorer: "Mattias Svanberg", scorerId: "swe_mattiassvanberg", assister: "Alexander Isak", assisterId: "swe_alexanderisak" },
+      { minute: 96, team: "home", scorer: "Yasin Ayari", scorerId: "swe_yasinayari", assister: "Lucas Bergvall", assisterId: "swe_lucasbergvall" }
+    ]);
+
+    // ── Grupo G ──
+    this._applyFixedMatch("G_1", 1, 1, [
+      { minute: 19, team: "away", scorer: "Emam Ashour", scorerId: "egy_emamashour", assister: "Mohamed Salah", assisterId: "egy_mohamedsalah" },
+      { minute: 66, team: "home", scorer: "Mohamed Hany (Autogol)", scorerId: null, assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("G_2", 2, 2, [
+      { minute: 7, team: "away", scorer: "Elijah Just", scorerId: "nzl_elijahjust", assister: "Chris Wood", assisterId: "nzl_chriswood" },
+      { minute: 32, team: "home", scorer: "Ramin Rezaeian", scorerId: "irn_raminrezaeian", assister: null, assisterId: null },
+      { minute: 54, team: "away", scorer: "Elijah Just", scorerId: "nzl_elijahjust", assister: "Chris Wood", assisterId: "nzl_chriswood" },
+      { minute: 64, team: "home", scorer: "Mohammad Mohebbi", scorerId: "irn_mohammadmohebbi", assister: "Ramin Rezaeian", assisterId: "irn_raminrezaeian" }
+    ]);
+
+    // ── Grupo H ──
+    this._applyFixedMatch("H_1", 0, 0, []);
+
+    this._applyFixedMatch("H_2", 1, 1, [
+      { minute: 41, team: "home", scorer: "Abdulelah Alamri", scorerId: "ksa_abdulelahalamri", assister: null, assisterId: null },
+      { minute: 80, team: "away", scorer: "Maxi Araujo", scorerId: "uru_maxiaraujo", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo I ──
+    this._applyFixedMatch("I_1", 3, 1, [
+      { minute: 66, team: "home", scorer: "Kylian Mbappe", scorerId: "fra_kylianmbappe", assister: null, assisterId: null },
+      { minute: 82, team: "home", scorer: "Bradley Barcola", scorerId: "fra_bradleybarcola", assister: null, assisterId: null },
+      { minute: 90 + 5, team: "away", scorer: "Ibrahim Mbaye", scorerId: "sen_ibrahimmbaye", assister: null, assisterId: null },
+      { minute: 90 + 6, team: "home", scorer: "Kylian Mbappe", scorerId: "fra_kylianmbappe", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("I_2", 1, 4, [
+      { minute: 29, team: "away", scorer: "Erling Haaland", scorerId: "nor_erlinghaaland", assister: "David Moller Wolfe", assisterId: "nor_davidmollerwolfe" },
+      { minute: 39, team: "home", scorer: "Aymen Hussein", scorerId: "irq_aymenhussein", assister: "Amir Alammari", assisterId: "irq_amiralammari" },
+      { minute: 43, team: "away", scorer: "Erling Haaland", scorerId: "nor_erlinghaaland", assister: null, assisterId: null },
+      { minute: 76, team: "away", scorer: "Leo Ostigard", scorerId: "nor_leoostigard", assister: null, assisterId: null },
+      { minute: 90 + 6, team: "home", scorer: "Aymen Hussein (Autogol)", scorerId: null, assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo J ──
+    this._applyFixedMatch("J_1", 3, 0, [
+      { minute: 16, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null },
+      { minute: 60, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null },
+      { minute: 76, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("J_2", 3, 1, [
+      { minute: 21, team: "home", scorer: "Romano Schmid", scorerId: "aut_romanoschmid", assister: null, assisterId: null },
+      { minute: 50, team: "away", scorer: "Ali Olwan", scorerId: "jor_aliolwan", assister: null, assisterId: null },
+      { minute: 76, team: "home", scorer: "Yazan Alarab (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 90 + 12, team: "home", scorer: "Marko Arnautovic", scorerId: "aut_markoarnautovic", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo K ──
+    this._applyFixedMatch("K_1", 1, 1, [
+      { minute: 6, team: "home", scorer: "Joao Neves", scorerId: "ptg_joaoneves", assister: null, assisterId: null },
+      { minute: 45 + 5, team: "away", scorer: "Yoane Wissa", scorerId: "cod_yoanewissa", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("K_2", 3, 1, [
+      { minute: 40, team: "home", scorer: "Daniel Munoz", scorerId: "col_danielmunoz", assister: null, assisterId: null },
+      { minute: 60, team: "away", scorer: "Abbosbek Fayzullaev", scorerId: "uzb_abbosbekfayzullaev", assister: null, assisterId: null },
+      { minute: 65, team: "home", scorer: "Luis Diaz", scorerId: "col_luisdiaz", assister: null, assisterId: null },
+      { minute: 90 + 9, team: "home", scorer: "Jaminton Campaz", scorerId: "col_jamintoncampaz", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo L ──
+    this._applyFixedMatch("L_1", 4, 2, [
+      { minute: 12, team: "home", scorer: "Harry Kane", scorerId: "eng_harrykane", assister: null, assisterId: null },
+      { minute: 36, team: "away", scorer: "Martin Baturina", scorerId: "cro_martinbaturina", assister: null, assisterId: null },
+      { minute: 39, team: "home", scorer: "Harry Kane", scorerId: "eng_harrykane", assister: null, assisterId: null },
+      { minute: 45, team: "away", scorer: "Petar Musa", scorerId: "cro_petarmusa", assister: null, assisterId: null },
+      { minute: 47, team: "home", scorer: "Jude Bellingham", scorerId: "eng_judebellingham", assister: null, assisterId: null },
+      { minute: 85, team: "home", scorer: "Marcus Rashford", scorerId: "eng_marcusrashford", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("L_2", 1, 0, [
+      { minute: 90 + 5, team: "home", scorer: "Caleb Yirenkyi", scorerId: "gha_calebyirenkyi", assister: null, assisterId: null }
+    ]);
+
+
+    // === JORNADA 2 ===
+    // ── Grupo A ──
+    this._applyFixedMatch("A_3", 1, 0, [
+      { minute: 50, team: "home", scorer: "Luis Romo", scorerId: "mex_luisromo", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("A_4", 1, 1, [
+      { minute: 6, team: "away", scorer: "Michal Sadilek", scorerId: "cze_michalsadilek", assister: null, assisterId: null },
+      { minute: 83, team: "home", scorer: "Teboho Mokoena", scorerId: "rsa_tebohomokoena", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo B ──
+    this._applyFixedMatch("B_3", 6, 0, [
+      { minute: 15, team: "home", scorer: "Jonathan David", scorerId: "can_jonathandavid", assister: null, assisterId: null },
+      { minute: 25, team: "home", scorer: "Cyle Larin", scorerId: "can_cylelarin", assister: null, assisterId: null },
+      { minute: 40, team: "home", scorer: "Jonathan David", scorerId: "can_jonathandavid", assister: null, assisterId: null },
+      { minute: 55, team: "home", scorer: "Catar (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 70, team: "home", scorer: "Jonathan David", scorerId: "can_jonathandavid", assister: null, assisterId: null },
+      { minute: 85, team: "home", scorer: "Nathan Saliba", scorerId: "can_nathansaliba", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("B_4", 1, 4, [
+      { minute: 74, team: "away", scorer: "Johan Manzambi", scorerId: "sui_johanmanzambi", assister: null, assisterId: null },
+      { minute: 84, team: "away", scorer: "Ruben Vargas", scorerId: "sui_rubenvargas", assister: null, assisterId: null },
+      { minute: 90, team: "away", scorer: "Johan Manzambi", scorerId: "sui_johanmanzambi", assister: null, assisterId: null },
+      { minute: 90 + 3, team: "home", scorer: "Ermin Mahmic", scorerId: "bih_erminmahmic", assister: null, assisterId: null },
+      { minute: 90 + 7, team: "away", scorer: "Granit Xhaka", scorerId: "sui_granitxhaka", assister: null, assisterId: null }
+    ], [
+      { minute: 80, team: "home", player: "Tarik Muharemovic", playerId: "bih_tarikmuharemovic" }
+    ]);
+
+    // ── Grupo C ──
+    this._applyFixedMatch("C_3", 3, 0, [
+      { minute: 23, team: "home", scorer: "Matheus Cunha", scorerId: "bra_matheuscunha", assister: null, assisterId: null },
+      { minute: 36, team: "home", scorer: "Matheus Cunha", scorerId: "bra_matheuscunha", assister: null, assisterId: null },
+      { minute: 45 + 3, team: "home", scorer: "Vinicius Junior", scorerId: "bra_viniciusjunior", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("C_4", 1, 0, [
+      { minute: 2, team: "home", scorer: "Ismael Saibari", scorerId: "mar_ismaelsaibari", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo D ──
+    this._applyFixedMatch("D_3", 2, 0, [
+      { minute: 11, team: "home", scorer: "Cameron Burgess (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 43, team: "home", scorer: "Alex Freeman", scorerId: "usa_alexfreeman", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("D_4", 1, 0, [
+      { minute: 1, team: "home", scorer: "Matias Galarza", scorerId: "pry_matiasgalarza", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo E ──
+    this._applyFixedMatch("E_3", 2, 1, [
+      { minute: 30, team: "away", scorer: "Franck Kessie", scorerId: "civ_franckkessie", assister: null, assisterId: null },
+      { minute: 68, team: "home", scorer: "Deniz Undav", scorerId: "ger_denizundav", assister: null, assisterId: null },
+      { minute: 90 + 4, team: "home", scorer: "Deniz Undav", scorerId: "ger_denizundav", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("E_4", 0, 0, []);
+
+    // ── Grupo F ──
+    this._applyFixedMatch("F_3", 5, 1, [
+      { minute: 5, team: "home", scorer: "Brian Brobbey", scorerId: "ned_brianbrobbey", assister: null, assisterId: null },
+      { minute: 17, team: "home", scorer: "Brian Brobbey", scorerId: "ned_brianbrobbey", assister: null, assisterId: null },
+      { minute: 47, team: "home", scorer: "Cody Gakpo", scorerId: "ned_codygakpo", assister: null, assisterId: null },
+      { minute: 54, team: "home", scorer: "Cody Gakpo", scorerId: "ned_codygakpo", assister: null, assisterId: null },
+      { minute: 59, team: "away", scorer: "Anthony Elanga", scorerId: "swe_anthonyelanga", assister: null, assisterId: null },
+      { minute: 89, team: "home", scorer: "Crysencio Summerville", scorerId: "ned_crysenciosummerville", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("F_4", 4, 0, [
+      { minute: 4, team: "home", scorer: "Daichi Kamada", scorerId: "jpn_daichikamada", assister: null, assisterId: null },
+      { minute: 31, team: "home", scorer: "Ayase Ueda", scorerId: "jpn_ayaseueda", assister: null, assisterId: null },
+      { minute: 69, team: "home", scorer: "Junya Ito", scorerId: "jpn_junyaito", assister: null, assisterId: null },
+      { minute: 83, team: "home", scorer: "Ayase Ueda", scorerId: "jpn_ayaseueda", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo H ──
+    this._applyFixedMatch("H_3", 4, 0, [
+      { minute: 10, team: "home", scorer: "Lamine Yamal", scorerId: "esp_lamineyamal", assister: "Mikel Oyarzabal", assisterId: "esp_mikeloyarzabal" },
+      { minute: 21, team: "home", scorer: "Mikel Oyarzabal", scorerId: "esp_mikeloyarzabal", assister: "Aymeric Laporte", assisterId: "esp_aymericlaporte" },
+      { minute: 24, team: "home", scorer: "Mikel Oyarzabal", scorerId: "esp_mikeloyarzabal", assister: "Dani Olmo", assisterId: "esp_daniolmo" },
+      { minute: 49, team: "home", scorer: "Hassan Altambakti (Autogol)", scorerId: null, assister: null, assisterId: null }
+    ]);
 
     // Sort all groups standings after preloading results
     Object.keys(this.groups).forEach(letter => {
@@ -849,6 +429,81 @@ export class WorldCupSimulator {
     });
   }
 
+  // Helper function to apply fixed match results and update standings/statistics
+  _applyFixedMatch(matchId, homeScore, awayScore, events = [], redCards = []) {
+    const match = this.groupMatches.find(m => m.id === matchId);
+    if (!match) return;
+
+    match.played = true;
+    match.fixed = true;
+    match.score = { home: homeScore, away: awayScore };
+    match.events = events;
+    match.redCards = redCards;
+
+    const grp = this.groups[match.group];
+    const grpHome = grp.find(t => t.id === match.home.id);
+    const grpAway = grp.find(t => t.id === match.away.id);
+
+    if (grpHome && grpAway) {
+      grpHome.played += 1;
+      grpAway.played += 1;
+      grpHome.goalsFor += homeScore;
+      grpHome.goalsAgainst += awayScore;
+      grpAway.goalsFor += awayScore;
+      grpAway.goalsAgainst += homeScore;
+
+      if (homeScore > awayScore) {
+        grpHome.won += 1;
+        grpHome.points += 3;
+        grpAway.lost += 1;
+      } else if (homeScore < awayScore) {
+        grpAway.won += 1;
+        grpAway.points += 3;
+        grpHome.lost += 1;
+      } else {
+        grpHome.drawn += 1;
+        grpHome.points += 1;
+        grpAway.drawn += 1;
+        grpAway.points += 1;
+      }
+      grpHome.goalDifference = grpHome.goalsFor - grpHome.goalsAgainst;
+      grpAway.goalDifference = grpAway.goalsFor - grpAway.goalsAgainst;
+    }
+
+    const homeTeam = this.findTeam(match.home.id);
+    const awayTeam = this.findTeam(match.away.id);
+
+    [homeTeam, awayTeam].forEach(team => {
+      if (team) {
+        team.squad.forEach(p => {
+          if (!p.injured && this.playerStats[p.id]) {
+            this.playerStats[p.id].matchesPlayed += 1;
+          }
+        });
+      }
+    });
+
+    events.forEach(e => {
+      if (e.scorerId && this.playerStats[e.scorerId]) {
+        this.playerStats[e.scorerId].goals += 1;
+      }
+      if (e.assisterId && this.playerStats[e.assisterId]) {
+        this.playerStats[e.assisterId].assists += 1;
+      }
+    });
+
+    redCards.forEach(rc => {
+      if (rc.playerId) {
+        const player = [homeTeam, awayTeam]
+          .filter(Boolean)
+          .flatMap(t => t.squad)
+          .find(p => p.id === rc.playerId);
+        if (player) {
+          player.suspended = true;
+        }
+      }
+    });
+  }
   // Find a team in the current state by ID
   findTeam(id) {
     return this.teams.find(t => t.id === id);
