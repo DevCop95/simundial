@@ -6,7 +6,7 @@
   <title>Simulador del Mundial de Fútbol - Edición Profesional</title>
   <meta name="description" content="Simula de forma interactiva el mundial de fútbol. Controla las convocatorias de cada país, gestiona lesiones y decide los ganadores manualmente o con nuestro simulador inteligente.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel="stylesheet" href="style.css?v=1.1">
+  <link rel="stylesheet" href="style-fresh.css">
 </head>
 <body>
   <div class="app-container">
@@ -63,45 +63,62 @@
       <section id="tab-bracket" class="tab-content">
         <div class="panel bracket-scroll">
           <div class="bracket-container" id="bracket-container">
-                    <!-- Round of 32 (Dieciseisavos) -->
-            <div class="bracket-column" id="col-r32">
-              <div class="bracket-column-title">Dieciseisavos de Final</div>
-              <div id="bracket-r32" class="bracket-matches-container r32-container">
-                <!-- Round of 32 matches -->
+            
+            <!-- LEFT HALF -->
+            <div class="bracket-half left-half">
+              <!-- Dieciseisavos Izq -->
+              <div class="bracket-column phase-r32">
+                <div class="bracket-column-title">1/16 Final (Izq)</div>
+                <div id="bracket-r32-left" class="bracket-matches-container"></div>
+              </div>
+              <!-- Octavos Izq -->
+              <div class="bracket-column phase-r16">
+                <div class="bracket-column-title">Octavos (Izq)</div>
+                <div id="bracket-r16-left" class="bracket-matches-container"></div>
+              </div>
+              <!-- Cuartos Izq -->
+              <div class="bracket-column phase-qf">
+                <div class="bracket-column-title">Cuartos (Izq)</div>
+                <div id="bracket-qf-left" class="bracket-matches-container"></div>
+              </div>
+              <!-- Semifinal Izq -->
+              <div class="bracket-column phase-sf">
+                <div class="bracket-column-title">Semifinal (Izq)</div>
+                <div id="bracket-sf-left" class="bracket-matches-container"></div>
               </div>
             </div>
 
-            <!-- Round of 16 -->
-            <div class="bracket-column" id="col-r16">
-              <div class="bracket-column-title">Octavos de Final</div>
-              <div id="bracket-r16" class="bracket-matches-container r16-container">
-                <!-- Round of 16 matches -->
+            <!-- CENTER (Finals) -->
+            <div class="bracket-center">
+              <div class="bracket-column phase-third_final">
+                <div class="bracket-column-title">Gran Final</div>
+                <div id="bracket-finals" class="bracket-matches-container finals-container"></div>
               </div>
             </div>
 
-            <!-- Quarter Finals -->
-            <div class="bracket-column" id="col-qf">
-              <div class="bracket-column-title">Cuartos de Final</div>
-              <div id="bracket-qf" class="bracket-matches-container qf-container">
-                <!-- Quarter final matches -->
+            <!-- RIGHT HALF -->
+            <div class="bracket-half right-half">
+              <!-- Semifinal Der -->
+              <div class="bracket-column phase-sf">
+                <div class="bracket-column-title">Semifinal (Der)</div>
+                <div id="bracket-sf-right" class="bracket-matches-container"></div>
+              </div>
+              <!-- Cuartos Der -->
+              <div class="bracket-column phase-qf">
+                <div class="bracket-column-title">Cuartos (Der)</div>
+                <div id="bracket-qf-right" class="bracket-matches-container"></div>
+              </div>
+              <!-- Octavos Der -->
+              <div class="bracket-column phase-r16">
+                <div class="bracket-column-title">Octavos (Der)</div>
+                <div id="bracket-r16-right" class="bracket-matches-container"></div>
+              </div>
+              <!-- Dieciseisavos Der -->
+              <div class="bracket-column phase-r32">
+                <div class="bracket-column-title">1/16 Final (Der)</div>
+                <div id="bracket-r32-right" class="bracket-matches-container"></div>
               </div>
             </div>
-
-            <!-- Semi Finals -->
-            <div class="bracket-column" id="col-sf">
-              <div class="bracket-column-title">Semifinales</div>
-              <div id="bracket-sf" class="bracket-matches-container sf-container">
-                <!-- Semi final matches -->
-              </div>
-            </div>
-
-            <!-- Finals & 3rd Place -->
-            <div class="bracket-column" id="col-finals">
-              <div class="bracket-column-title">Finales</div>
-              <div id="bracket-finals" class="bracket-matches-container finals-container">
-                <!-- Third place & Final matches -->
-              </div>
-            </div></div>
 
           </div>
         </div>

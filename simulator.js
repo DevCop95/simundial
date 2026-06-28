@@ -143,6 +143,12 @@ export class WorldCupSimulator {
     this.currentPhase = "groups"; // "groups", "r32", "r16", "qf", "sf", "third_final", "finished"
     this.champion = null;
     this.thirdPlaceWinner = null;
+
+    const allGroupsFinished = this.groupMatches.every(m => m.played);
+    if (allGroupsFinished) {
+      this.currentPhase = "r32";
+      this.initRoundOf32();
+    }
   }
 
   // Create match schedule for the group stage
@@ -287,7 +293,7 @@ export class WorldCupSimulator {
       { minute: 39, team: "home", scorer: "Aymen Hussein", scorerId: "irq_aymenhussein", assister: "Amir Alammari", assisterId: "irq_amiralammari" },
       { minute: 43, team: "away", scorer: "Erling Haaland", scorerId: "nor_erlinghaaland", assister: null, assisterId: null },
       { minute: 76, team: "away", scorer: "Leo Ostigard", scorerId: "nor_leoostigard", assister: null, assisterId: null },
-      { minute: 90 + 6, team: "home", scorer: "Aymen Hussein (Autogol)", scorerId: null, assister: null, assisterId: null }
+      { minute: 90 + 6, team: "away", scorer: "Aymen Hussein (Autogol)", scorerId: null, assister: null, assisterId: null }
     ]);
 
     // ── Grupo J ──
@@ -310,11 +316,11 @@ export class WorldCupSimulator {
       { minute: 45 + 5, team: "away", scorer: "Yoane Wissa", scorerId: "cod_yoanewissa", assister: null, assisterId: null }
     ]);
 
-    this._applyFixedMatch("K_2", 3, 1, [
-      { minute: 40, team: "home", scorer: "Daniel Munoz", scorerId: "col_danielmunoz", assister: null, assisterId: null },
-      { minute: 60, team: "away", scorer: "Abbosbek Fayzullaev", scorerId: "uzb_abbosbekfayzullaev", assister: null, assisterId: null },
-      { minute: 65, team: "home", scorer: "Luis Diaz", scorerId: "col_luisdiaz", assister: null, assisterId: null },
-      { minute: 90 + 9, team: "home", scorer: "Jaminton Campaz", scorerId: "col_jamintoncampaz", assister: null, assisterId: null }
+    this._applyFixedMatch("K_2", 1, 3, [
+      { minute: 40, team: "away", scorer: "Daniel Munoz", scorerId: "col_danielmunoz", assister: null, assisterId: null },
+      { minute: 60, team: "home", scorer: "Abbosbek Fayzullaev", scorerId: "uzb_abbosbekfayzullaev", assister: null, assisterId: null },
+      { minute: 65, team: "away", scorer: "Luis Diaz", scorerId: "col_luisdiaz", assister: null, assisterId: null },
+      { minute: 90 + 9, team: "away", scorer: "Jaminton Campaz", scorerId: "col_jamintoncampaz", assister: null, assisterId: null }
     ]);
 
     // ── Grupo L ──
@@ -416,6 +422,234 @@ export class WorldCupSimulator {
       { minute: 21, team: "home", scorer: "Mikel Oyarzabal", scorerId: "esp_mikeloyarzabal", assister: "Aymeric Laporte", assisterId: "esp_aymericlaporte" },
       { minute: 24, team: "home", scorer: "Mikel Oyarzabal", scorerId: "esp_mikeloyarzabal", assister: "Dani Olmo", assisterId: "esp_daniolmo" },
       { minute: 49, team: "home", scorer: "Hassan Altambakti (Autogol)", scorerId: null, assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo G Jornada 2 ──
+    this._applyFixedMatch("G_3", 0, 0, [], [
+      { minute: 66, team: "home", player: "Nathan Ngoy", playerId: "bel_nathanngoy" }
+    ]);
+
+    this._applyFixedMatch("G_4", 3, 1, [
+      { minute: 15, team: "away", scorer: "Finn Surman", scorerId: "nzl_finnsurman", assister: null, assisterId: null },
+      { minute: 59, team: "home", scorer: "Ziko", scorerId: "egy_mostafazico", assister: null, assisterId: null },
+      { minute: 67, team: "home", scorer: "Mohamed Salah", scorerId: "egy_mohamedsalah", assister: null, assisterId: null },
+      { minute: 82, team: "home", scorer: "Trezeguet", scorerId: "egy_trezeguet", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo H Jornada 2 ──
+    this._applyFixedMatch("H_4", 2, 2, [
+      { minute: 21, team: "home", scorer: "Kevin Pina", scorerId: "cpv_kevinpina", assister: null, assisterId: null },
+      { minute: 44, team: "away", scorer: "Maximiliano Araujo", scorerId: "uru_maxiaraujo", assister: null, assisterId: null },
+      { minute: 45 + 6, team: "away", scorer: "Agustin Canobbio", scorerId: "uru_agustincanobbio", assister: null, assisterId: null },
+      { minute: 61, team: "home", scorer: "Helio Varela", scorerId: "cpv_heliovarela", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo I Jornada 2 ──
+    this._applyFixedMatch("I_3", 3, 0, [
+      { minute: 14, team: "home", scorer: "Kylian Mbappe", scorerId: "fra_kylianmbappe", assister: null, assisterId: null },
+      { minute: 54, team: "home", scorer: "Kylian Mbappe", scorerId: "fra_kylianmbappe", assister: null, assisterId: null },
+      { minute: 66, team: "home", scorer: "Ousmane Dembele", scorerId: "fra_ousmanedembele", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("I_4", 2, 3, [
+      { minute: 43, team: "away", scorer: "Marcus Holmgren Pedersen", scorerId: "nor_marcusholmgrenpedersen", assister: null, assisterId: null },
+      { minute: 48, team: "away", scorer: "Erling Haaland", scorerId: "nor_erlinghaaland", assister: null, assisterId: null },
+      { minute: 53, team: "home", scorer: "Ismaila Sarr", scorerId: "sen_ismailasarr", assister: null, assisterId: null },
+      { minute: 58, team: "away", scorer: "Erling Haaland", scorerId: "nor_erlinghaaland", assister: null, assisterId: null },
+      { minute: 90 + 3, team: "home", scorer: "Ismaila Sarr", scorerId: "sen_ismailasarr", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo J Jornada 2 ──
+    this._applyFixedMatch("J_3", 2, 0, [
+      { minute: 38, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null },
+      { minute: 90 + 5, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("J_4", 2, 1, [
+      { minute: 36, team: "away", scorer: "Nizar Alrashdan", scorerId: "jor_nizaralrashdan", assister: null, assisterId: null },
+      { minute: 69, team: "home", scorer: "Nadhir Benbouali", scorerId: "alg_nadhirbenbouali", assister: null, assisterId: null },
+      { minute: 82, team: "home", scorer: "Amine Gouiri", scorerId: "alg_aminegouiri", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo K Jornada 2 ──
+    this._applyFixedMatch("K_3", 5, 0, [
+      { minute: 6, team: "home", scorer: "Cristiano Ronaldo", scorerId: "ptg_cristianoronaldo", assister: null, assisterId: null },
+      { minute: 17, team: "home", scorer: "Nuno Mendes", scorerId: "ptg_nunomendes", assister: null, assisterId: null },
+      { minute: 39, team: "home", scorer: "Cristiano Ronaldo", scorerId: "ptg_cristianoronaldo", assister: null, assisterId: null },
+      { minute: 60, team: "home", scorer: "Abdukodir Khusanov (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 87, team: "home", scorer: "Rafael Leao", scorerId: "ptg_rafaelleao", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("K_4", 0, 1, [
+      { minute: 76, team: "away", scorer: "Daniel Munoz", scorerId: "col_danielmunoz", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo L Jornada 2 ──
+    this._applyFixedMatch("L_3", 0, 0, []);
+
+    this._applyFixedMatch("L_4", 1, 0, [
+      { minute: 54, team: "home", scorer: "Ante Budimir", scorerId: "cro_antebudimir", assister: null, assisterId: null }
+    ]);
+
+
+    // === JORNADA 3 ===
+    // ── Grupo A Jornada 3 ──
+    this._applyFixedMatch("A_5", 3, 0, [
+      { minute: 55, team: "home", scorer: "Mateo Chavez", scorerId: "mex_mateochavez", assister: null, assisterId: null },
+      { minute: 61, team: "home", scorer: "Julian Quinones", scorerId: "mex_julianquinones", assister: null, assisterId: null },
+      { minute: 90 + 4, team: "home", scorer: "Alvaro Fidalgo", scorerId: "mex_alvarofidalgo", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("A_6", 1, 0, [
+      { minute: 63, team: "home", scorer: "Thapelo Maseko", scorerId: "rsa_thapelomaseko", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo B Jornada 3 ──
+    this._applyFixedMatch("B_5", 1, 2, [
+      { minute: 46, team: "away", scorer: "Ruben Vargas", scorerId: "sui_rubenvargas", assister: null, assisterId: null },
+      { minute: 57, team: "away", scorer: "Johan Manzambi", scorerId: "sui_johanmanzambi", assister: null, assisterId: null },
+      { minute: 76, team: "home", scorer: "Promise David", scorerId: "can_promisedavid", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("B_6", 3, 1, [
+      { minute: 29, team: "home", scorer: "Kerim Alajbegovic", scorerId: "bih_kerimalajbegovic", assister: null, assisterId: null },
+      { minute: 34, team: "home", scorer: "Mahmoud Abunada (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 42, team: "away", scorer: "Hassan Alhaydos", scorerId: "qat_hassanalhaydos", assister: null, assisterId: null },
+      { minute: 82, team: "home", scorer: "Ermin Mahmic", scorerId: "bih_erminmahmic", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo C Jornada 3 ──
+    this._applyFixedMatch("C_5", 3, 0, [
+      { minute: 7, team: "home", scorer: "Vinicius Junior", scorerId: "bra_viniciusjunior", assister: null, assisterId: null },
+      { minute: 45 + 3, team: "home", scorer: "Vinicius Junior", scorerId: "bra_viniciusjunior", assister: null, assisterId: null },
+      { minute: 60, team: "home", scorer: "Matheus Cunha", scorerId: "bra_matheuscunha", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("C_6", 4, 2, [
+      { minute: 10, team: "away", scorer: "Yassine Bounou (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 39, team: "home", scorer: "Achraf Hakimi", scorerId: "mar_achrafhakimi", assister: null, assisterId: null },
+      { minute: 43, team: "away", scorer: "Wilson Isidor", scorerId: "hai_wilsonisidor", assister: null, assisterId: null },
+      { minute: 45 + 1, team: "home", scorer: "Ismael Saibari", scorerId: "mar_ismaelsaibari", assister: null, assisterId: null },
+      { minute: 78, team: "home", scorer: "Soufiane Rahimi", scorerId: "mar_soufianerahimi", assister: null, assisterId: null },
+      { minute: 89, team: "home", scorer: "Gessime Yassine", scorerId: "mar_gessimeyassine", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo D Jornada 3 ──
+    this._applyFixedMatch("D_5", 2, 3, [
+      { minute: 3, team: "home", scorer: "Auston Trusty", scorerId: "usa_austontrusty", assister: null, assisterId: null },
+      { minute: 10, team: "away", scorer: "Arda Guler", scorerId: "tur_ardaguler", assister: null, assisterId: null },
+      { minute: 31, team: "away", scorer: "Orkun Kokcu", scorerId: "tur_orkunkokcu", assister: null, assisterId: null },
+      { minute: 49, team: "home", scorer: "Sebastian Berhalter", scorerId: "usa_sebastianberhalter", assister: null, assisterId: null },
+      { minute: 90 + 8, team: "away", scorer: "Kaan Ayhan", scorerId: "tur_kaanayhan", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("D_6", 0, 0, []);
+
+    // ── Grupo E Jornada 3 ──
+    this._applyFixedMatch("E_5", 1, 2, [
+      { minute: 2, team: "home", scorer: "Leroy Sane", scorerId: "ger_leroysane", assister: null, assisterId: null },
+      { minute: 9, team: "away", scorer: "Nilson Angulo", scorerId: "ecu_nilsonangulo", assister: null, assisterId: null },
+      { minute: 77, team: "away", scorer: "Gonzalo Plata", scorerId: "ecu_gonzaloplata", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("E_6", 0, 2, [
+      { minute: 7, team: "away", scorer: "Nicolas Pepe", scorerId: "civ_nicolaspepe", assister: null, assisterId: null },
+      { minute: 64, team: "away", scorer: "Nicolas Pepe", scorerId: "civ_nicolaspepe", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo F Jornada 3 ──
+    this._applyFixedMatch("F_5", 3, 1, [
+      { minute: 3, team: "home", scorer: "Ellyes Skhiri (Autogol)", scorerId: null, assister: null, assisterId: null },
+      { minute: 7, team: "home", scorer: "Brian Brobbey", scorerId: "ned_brianbrobbey", assister: null, assisterId: null },
+      { minute: 54, team: "away", scorer: "Hazem Mastouri", scorerId: "tun_hazemmastouri", assister: null, assisterId: null },
+      { minute: 63, team: "home", scorer: "Jan Paul Van Hecke", scorerId: "ned_janpaulvanhecke", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("F_6", 1, 1, [
+      { minute: 56, team: "home", scorer: "Daizen Maeda", scorerId: "jpn_daizenmaeda", assister: null, assisterId: null },
+      { minute: 62, team: "away", scorer: "Anthony Elanga", scorerId: "swe_anthonyelanga", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo G Jornada 3 ──
+    this._applyFixedMatch("G_5", 5, 1, [
+      { minute: 28, team: "home", scorer: "Leandro Trossard", scorerId: "bel_leandrotrossard", assister: null, assisterId: null },
+      { minute: 50, team: "home", scorer: "Leandro Trossard", scorerId: "bel_leandrotrossard", assister: null, assisterId: null },
+      { minute: 67, team: "home", scorer: "Kevin De Bruyne", scorerId: "bel_kevindebruyne", assister: null, assisterId: null },
+      { minute: 84, team: "away", scorer: "Elijah Just", scorerId: "nzl_elijahjust", assister: null, assisterId: null },
+      { minute: 86, team: "home", scorer: "Romelu Lukaku", scorerId: "bel_romelulukaku", assister: null, assisterId: null },
+      { minute: 90 + 4, team: "home", scorer: "Alexis Saelemaekers", scorerId: "bel_alexissaelemaekers", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("G_6", 1, 1, [
+      { minute: 5, team: "home", scorer: "Mahmoud Saber", scorerId: "egy_mahmoudsaber", assister: null, assisterId: null },
+      { minute: 14, team: "away", scorer: "Ramin Rezaeian", scorerId: "irn_raminrezaeian", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo H Jornada 3 ──
+    this._applyFixedMatch("H_5", 1, 0, [
+      { minute: 42, team: "home", scorer: "Alex Baena", scorerId: "esp_alexbaena", assister: null, assisterId: null }
+    ], [
+      { minute: 90, team: "away", player: "Agustin Canobbio", playerId: "uru_agustincanobbio" }
+    ]);
+
+    this._applyFixedMatch("H_6", 0, 0, []);
+
+    // ── Grupo I Jornada 3 ──
+    this._applyFixedMatch("I_5", 4, 1, [
+      { minute: 7, team: "home", scorer: "Ousmane Dembele", scorerId: "fra_ousmanedembele", assister: null, assisterId: null },
+      { minute: 19, team: "home", scorer: "Ousmane Dembele", scorerId: "fra_ousmanedembele", assister: null, assisterId: null },
+      { minute: 20, team: "away", scorer: "Thelo Aasgaard", scorerId: "nor_theloaasgaard", assister: null, assisterId: null },
+      { minute: 31, team: "home", scorer: "Ousmane Dembele", scorerId: "fra_ousmanedembele", assister: null, assisterId: null },
+      { minute: 90 + 3, team: "home", scorer: "Desire Doue", scorerId: "fra_desiredoue", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("I_6", 5, 0, [
+      { minute: 4, team: "home", scorer: "Habib Diarra", scorerId: "sen_habibdiarra", assister: null, assisterId: null },
+      { minute: 56, team: "home", scorer: "Ismaila Sarr", scorerId: "sen_ismailasarr", assister: null, assisterId: null },
+      { minute: 59, team: "home", scorer: "Pape Gueye", scorerId: "sen_papegueye", assister: null, assisterId: null },
+      { minute: 71, team: "home", scorer: "Pape Gueye", scorerId: "sen_papegueye", assister: null, assisterId: null },
+      { minute: 82, team: "home", scorer: "Iliman Ndiaye", scorerId: "sen_ilimanndiaye", assister: null, assisterId: null }
+    ], [
+      { minute: 13, team: "away", player: "Rebin Sulaka", playerId: "irq_rebinsulaka" }
+    ]);
+
+    // ── Grupo J Jornada 3 ──
+    this._applyFixedMatch("J_5", 3, 1, [
+      { minute: 19, team: "home", scorer: "Giovani Lo Celso", scorerId: "arg_giovanilocelso", assister: null, assisterId: null },
+      { minute: 31, team: "home", scorer: "Lautaro Martinez", scorerId: "arg_lautaromartinez", assister: null, assisterId: null },
+      { minute: 55, team: "away", scorer: "Mousa Altamari", scorerId: "jor_mousaaltamari", assister: null, assisterId: null },
+      { minute: 80, team: "home", scorer: "Lionel Messi", scorerId: "arg_lionelmessi", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("J_6", 3, 3, [
+      { minute: 28, team: "away", scorer: "Marko Arnautovic", scorerId: "aut_markoarnautovic", assister: null, assisterId: null },
+      { minute: 41, team: "home", scorer: "Rafik Belghali", scorerId: "alg_rafikbelghali", assister: null, assisterId: null },
+      { minute: 55, team: "away", scorer: "Marcel Sabitzer", scorerId: "aut_marcelsabitzer", assister: null, assisterId: null },
+      { minute: 60, team: "home", scorer: "Riyad Mahrez", scorerId: "alg_riyadmahrez", assister: null, assisterId: null },
+      { minute: 90 + 3, team: "home", scorer: "Riyad Mahrez", scorerId: "alg_riyadmahrez", assister: null, assisterId: null },
+      { minute: 90 + 5, team: "away", scorer: "Sasa Kalajdzic", scorerId: "aut_sasakalajdzic", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo K Jornada 3 ──
+    this._applyFixedMatch("K_5", 0, 0, []);
+
+    this._applyFixedMatch("K_6", 3, 1, [
+      { minute: 10, team: "away", scorer: "Eldor Shomurodov", scorerId: "uzb_eldorshomurodov", assister: null, assisterId: null },
+      { minute: 68, team: "home", scorer: "Yoane Wissa", scorerId: "cod_yoanewissa", assister: null, assisterId: null },
+      { minute: 78, team: "home", scorer: "Fiston Mayele", scorerId: "cod_fistonmayele", assister: null, assisterId: null },
+      { minute: 90 + 1, team: "home", scorer: "Yoane Wissa", scorerId: "cod_yoanewissa", assister: null, assisterId: null }
+    ]);
+
+    // ── Grupo L Jornada 3 ──
+    this._applyFixedMatch("L_5", 2, 0, [
+      { minute: 62, team: "home", scorer: "Jude Bellingham", scorerId: "eng_judebellingham", assister: null, assisterId: null },
+      { minute: 67, team: "home", scorer: "Harry Kane", scorerId: "eng_harrykane", assister: null, assisterId: null }
+    ]);
+
+    this._applyFixedMatch("L_6", 2, 1, [
+      { minute: 31, team: "home", scorer: "Petar Sucic", scorerId: "cro_petarsucic", assister: null, assisterId: null },
+      { minute: 73, team: "away", scorer: "Derrick Luckassen", scorerId: "gha_derrickluckassen", assister: null, assisterId: null },
+      { minute: 83, team: "home", scorer: "Nikola Vlasic", scorerId: "cro_nikolavlasic", assister: null, assisterId: null }
     ]);
 
     // Sort all groups standings after preloading results
@@ -848,83 +1082,42 @@ export class WorldCupSimulator {
 
   // Initialize Round of 32 matches based on Group results
   initRoundOf32() {
-    const groupLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-    
-    // 1. Get Winners, Runners-up and Thirds
-    const winners = [];
-    const runnersUp = [];
-    const thirds = [];
+    const pairings = [
+      // Lado Izquierdo (Top to Bottom)
+      { home: "GER", away: "PRY" },
+      { home: "FRA", away: "SWE" },
+      { home: "RSA", away: "CAN" },
+      { home: "NED", away: "MAR" },
+      { home: "PTG", away: "CRO" },
+      { home: "ESP", away: "AUT" },
+      { home: "USA", away: "BIH" },
+      { home: "BEL", away: "SEN" },
 
-    groupLetters.forEach(letter => {
-      const grp = this.groups[letter];
-      winners.push(this.findTeam(grp[0].id));
-      runnersUp.push(this.findTeam(grp[1].id));
-      thirds.push(this.findTeam(grp[2].id));
-    });
+      // Lado Derecho (Top to Bottom)
+      { home: "BRA", away: "JPN" },
+      { home: "CIV", away: "NOR" },
+      { home: "MEX", away: "ECU" },
+      { home: "ENG", away: "COD" },
+      { home: "ARG", away: "CPV" },
+      { home: "AUS", away: "EGY" },
+      { home: "SUI", away: "ALG" },
+      { home: "COL", away: "GHA" }
+    ];
 
-    // 2. Identify the 8 best thirds
-    const getThirdsStats = (team) => {
-      const letter = team.group;
-      const grpTeam = this.groups[letter].find(t => t.id === team.id);
-      return grpTeam || { points: 0, goalDifference: 0, goalsFor: 0 };
-    };
-
-    const sortedThirds = [...thirds].sort((a, b) => {
-      const statsA = getThirdsStats(a);
-      const statsB = getThirdsStats(b);
-      if (statsB.points !== statsA.points) return statsB.points - statsA.points;
-      if (statsB.goalDifference !== statsA.goalDifference) return statsB.goalDifference - statsA.goalDifference;
-      if (statsB.goalsFor !== statsA.goalsFor) return statsB.goalsFor - statsA.goalsFor;
-      return Math.random() - 0.5;
-    });
-
-    const bestThirds = sortedThirds.slice(0, 8);
-
-    // 3. Pair them deterministically
-    // - 8 Winners vs 8 Best Thirds
-    // - 4 Winners vs 4 Runners-up
-    // - 8 Runners-up vs 8 Runners-up
     this.bracket.r32 = [];
-
-    // Pair Winners 0-7 with Best Thirds 0-7
-    for (let i = 0; i < 8; i++) {
+    pairings.forEach((pair, idx) => {
+      const homeTeam = this.findTeam(pair.home);
+      const awayTeam = this.findTeam(pair.away);
       this.bracket.r32.push({
-        id: `r32_${i + 1}`,
-        home: winners[i],
-        away: bestThirds[i],
+        id: `r32_${idx + 1}`,
+        home: homeTeam,
+        away: awayTeam,
         played: false,
         score: null,
         winner: null,
         details: null
       });
-    }
-
-    // Pair Winners 8-11 with RunnersUp 0-3
-    for (let i = 0; i < 4; i++) {
-      this.bracket.r32.push({
-        id: `r32_${i + 9}`,
-        home: winners[i + 8],
-        away: runnersUp[i],
-        played: false,
-        score: null,
-        winner: null,
-        details: null
-      });
-    }
-
-    // Pair remaining RunnersUp 4-11 with each other (4 vs 5, 6 vs 7, 8 vs 9, 10 vs 11)
-    const runIdx = [4, 5, 6, 7, 8, 9, 10, 11];
-    for (let i = 0; i < 8; i += 2) {
-      this.bracket.r32.push({
-        id: `r32_${(i / 2) + 13}`,
-        home: runnersUp[runIdx[i]],
-        away: runnersUp[runIdx[i + 1]],
-        played: false,
-        score: null,
-        winner: null,
-        details: null
-      });
-    }
+    });
   }
 
   // Initialize Round of 16 matches based on Round of 32 results

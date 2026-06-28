@@ -268,8 +268,8 @@ function renderGroupStage() {
 
       const allGroupsFinished = sim.groupMatches.every(m => m.played);
       if (allGroupsFinished) {
-        sim.currentPhase = "r16";
-        sim.initRoundOf16();
+        sim.currentPhase = "r32";
+        sim.initRoundOf32();
       }
 
       renderGroupStage();
@@ -388,10 +388,14 @@ function createCell(text) {
 
 // Render Bracket / Knockout
 function renderBracket() {
-  renderBracketColumn("bracket-r32", sim.bracket.r32, "r32");
-  renderBracketColumn("bracket-r16", sim.bracket.r16, "r16");
-  renderBracketColumn("bracket-qf", sim.bracket.qf, "qf");
-  renderBracketColumn("bracket-sf", sim.bracket.sf, "sf");
+  renderBracketColumn("bracket-r32-left", sim.bracket.r32.slice(0, 8), "r32");
+  renderBracketColumn("bracket-r32-right", sim.bracket.r32.slice(8, 16), "r32");
+  renderBracketColumn("bracket-r16-left", sim.bracket.r16.slice(0, 4), "r16");
+  renderBracketColumn("bracket-r16-right", sim.bracket.r16.slice(4, 8), "r16");
+  renderBracketColumn("bracket-qf-left", sim.bracket.qf.slice(0, 2), "qf");
+  renderBracketColumn("bracket-qf-right", sim.bracket.qf.slice(2, 4), "qf");
+  renderBracketColumn("bracket-sf-left", sim.bracket.sf.slice(0, 1), "sf");
+  renderBracketColumn("bracket-sf-right", sim.bracket.sf.slice(1, 2), "sf");
   renderBracketFinals();
 
   // Highlight and scroll to the active column in the bracket grid
@@ -408,30 +412,23 @@ function highlightAndScrollActiveColumn() {
     col.classList.remove("active-column-highlight");
   });
 
-  let activeColId = null;
-  if (currentPhase === "r32") activeColId = "col-r32";
-  else if (currentPhase === "r16") activeColId = "col-r16";
-  else if (currentPhase === "qf") activeColId = "col-qf";
-  else if (currentPhase === "sf") activeColId = "col-sf";
-  else if (currentPhase === "third_final") activeColId = "col-finals";
+  const activeCols = document.querySelectorAll(`.phase-${currentPhase}`);
+  activeCols.forEach(col => {
+    col.classList.add("active-column-highlight");
+  });
 
-  if (activeColId) {
-    const activeCol = document.getElementById(activeColId);
-    if (activeCol) {
-      activeCol.classList.add("active-column-highlight");
-      
-      // Scroll to the active column smoothly within the scroll container
-      activeCol.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center"
-      });
-    }
+  if (activeCols.length > 0) {
+    activeCols[0].scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center"
+    });
   }
 }
 
 function renderBracketColumn(containerId, matches, phase) {
   const container = document.getElementById(containerId);
+  if (!container) return;
   container.innerHTML = "";
 
   if (matches.length === 0) {
@@ -541,6 +538,7 @@ function renderBracketColumn(containerId, matches, phase) {
 
 function renderBracketFinals() {
   const container = document.getElementById("bracket-finals");
+  if (!container) return;
   container.innerHTML = "";
 
   const final = sim.bracket.final;
